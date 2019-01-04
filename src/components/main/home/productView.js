@@ -23,18 +23,17 @@ class Products extends Component {
 
 
 	render() {
-
 		return (
-			<div className="SB">
+			<div>
 
 				<div className={this.state.view == 1 ? "viewh--active" : "viewh--disabled"}>
-					<div className="view--scrollable">
+					<div className="view--scrollable productView">
 						<ProductsDisplay parent={this}/>
 					</div>
 				</div>
 
 				<div className={this.state.view == 2 ? "viewh--active" : "viewh--disabled"}>
-					<div className="view--scrollable">
+					<div className="view--scrollable productView">
 						<ViewProduct parent={this} />
 					</div>
 				</div>

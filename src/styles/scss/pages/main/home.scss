@@ -231,7 +231,6 @@
         min-height: 60vh;
         float: left;
         width: 100%;
-        margin-top: 10vh;
         padding: 2rem 0 0 10%;
         display: grid;
         grid-template-columns: 20% 20% 20% 20% 20%;
@@ -463,6 +462,10 @@
     margin-bottom: 2rem;
     &__home {
         float: left;
+        width: 10rem;
+        height: 4rem;
+        line-height: 4rem;
+        margin: .5rem 0;
     }
     &__category {
         min-width: 10%;
@@ -508,6 +511,7 @@
         &__button {
             width: 10rem;
             height: 3rem;
+            line-height: 3rem;
             float: right;
         }
     }
@@ -774,4 +778,16 @@
             margin-right: 2rem;
         }
     }
+}
+
+.productView{
+    height: 100vh;
+}
+
+.products__view{
+    margin-top:10vh;
+    height: 90vh;
+    width:100%;
+    overflow: scroll;
+    float: left;
 }

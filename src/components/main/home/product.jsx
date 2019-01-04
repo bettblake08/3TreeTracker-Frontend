@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import humanize from "@nlib/human-readable";
-import {WEB_URL} from "../../abstract/variables";
+import PropTypes from "prop-types";
+import {WEB_URL} from "../../../abstract/variables";
 
 class Product extends Component {
 	render() {
@@ -76,5 +77,10 @@ class Product extends Component {
 		);
 	}
 }
+
+Product.propTypes = {
+	post: PropTypes.object.isRequired,
+	parent: PropTypes.object.isRequired
+};
 
 export default Product;

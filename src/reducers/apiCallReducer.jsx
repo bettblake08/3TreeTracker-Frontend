@@ -2,31 +2,29 @@ import * as types from "../actions/actionTypes";
 import objectAssign from "object-assign";
 
 export default (state = [], action) => {
-	let newState = {};
+	let newState = objectAssign({}, state);
+
+	if (newState.apiCall == undefined) {
+		newState.apiCall = {};
+	}
+
+	let apiCall = objectAssign({}, newState);
 
 	switch (action.type) {
 	case types.RELOAD_API_CALL: {
-		newState = objectAssign({}, state);
-
-		if(newState.apiCall == undefined){
-			newState.apiCall =  {};
-		}
-        
-		if (newState.apiCall[action.request] == undefined){
-			newState.apiCall[action.request] = {
+		if (apiCall[action.request] == undefined){
+			apiCall[action.request] = {
 				max: action.max,
 				attempts: 0
 			};
 		}
         
-		newState.apiCall[action.request].attempts += 1;
+		apiCall[action.request].attempts += 1;
 		return newState;
 	}
 	case types.RESET_API_COUNT: {
-		newState = objectAssign({}, state);
-
-		if(newState.apiCall != undefined || newState.apiCall[action.request] != undefined){
-			newState.apiCall[action.request].attempts = 0;
+		if(apiCall != undefined || apiCall[action.request] != undefined){
+			apiCall[action.request].attempts = 0;
 		}
 
 		return newState;

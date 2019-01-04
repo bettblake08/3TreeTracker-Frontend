@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import {connect} from "react-redux";
 import PropTypes from "prop-types";
 import {bindActionCreators} from "redux";
-import Product from "../../common/product";
+import Product from "./product";
 import * as productActions from "../../../actions/productActions";
 import Button from "../../UI/button";
 
@@ -30,7 +30,7 @@ class ProductsView extends Component {
 		var c = this;
 		
 		return (
-			<div id="content">
+			<div id="content" className="products__view SB">
 				<div className="content__view">
 					{
 						this.props.products.content.map((item, i) => {
@@ -66,10 +66,11 @@ ProductsView.propTypes = {
 };
 
 function mapStateToProps(state) {
+	let products = state.productReducer.products;
 	return {
 		products: {
-			content: state.products == undefined ? []: state.products.content,
-			offset: state.products == undefined ? 0 : state.products.offset
+			content: products == undefined ? []: products.content,
+			offset: products == undefined ? 0 : products.offset
 		}
 	};
 }

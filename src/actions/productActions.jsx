@@ -16,7 +16,7 @@ export function getProducts(reset = false, offset = 0){
 				dispatch(getProductsSuccess(response));
 			}
 			else {
-				dispatch(errorPopup.displayErrorMessage(response.message));
+				dispatch(errorPopup.displayErrorMessage(response.error.message));
 			}
 		});
 	};

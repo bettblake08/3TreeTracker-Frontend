@@ -32,7 +32,7 @@ class HomePage extends Component {
 		return (
 
 			<div id="section_1">
-				<ErrorPopup parent={this} />
+				<ErrorPopup />
 				<div className={viewClass} >
 					<div className={this.state.view == 1 ? "view__option--active" : "view__option--disabled"} onClick={() => { this.setView(1); }} >
 						<svg className="icon">
