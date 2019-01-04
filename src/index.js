@@ -13,7 +13,7 @@ const store = configureStore();
 
 render( 
 	<AppContainer>
-		<Root store={store} history={ history}/>
+		<Root store={store} history={history}/>
 	</AppContainer>,
 	document.getElementById("app")
 );

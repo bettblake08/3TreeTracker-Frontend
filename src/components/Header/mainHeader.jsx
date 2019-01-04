@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {Link} from "react-router-dom";
 import { WEB_URL, MAIN_LOGO } from "../../abstract/variables";
 import setSVGIcons from "../../abstract/icons";
 import MenuType1 from "../UI/menuType1";
@@ -25,7 +26,7 @@ class MainHeader extends Component {
 		window.removeEventListener("scroll", this.handleScroll);
 	}
 
-	handleScroll(e) {
+	handleScroll() {
 		var offset = 2;
 		var state = this.state;
 
@@ -71,11 +72,11 @@ class MainHeader extends Component {
 			<div className={headerClass}>
 				<div className="row">
 					<div className="header__left">
-						<a href={WEB_URL}>
+						<Link to="/">
 							<div className="header__logo">
 								<img src={MAIN_LOGO} />
 							</div>
-						</a>
+						</Link>
 						<div className="header__title f_banner_1">Longrich</div>
 					</div>
 

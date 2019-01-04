@@ -1,8 +1,8 @@
 /* eslint-disable import/no-named-as-default */
 import { Route, Switch } from "react-router-dom";
 
-import HomePage from "./HomePage";
-import NotFoundPage from "./NotFoundPage";
+import HomePage from "./main/homePage";
+import NotFoundPage from "./notFoundPage";
 import MainHeader from "./Header/mainHeader";
 import PropTypes from "prop-types";
 import React from "react";
@@ -16,9 +16,11 @@ class App extends React.Component {
 	render() {
 		return (
 			<div>
-				<Switch>
+				<div>
 					<MainHeader />
-					<Route exact path="/" component={HomePage} />
+				</div>
+				<Switch>
+					<Route path="/" component={HomePage} />
 					<Route component={NotFoundPage} />
 				</Switch>
 			</div>
