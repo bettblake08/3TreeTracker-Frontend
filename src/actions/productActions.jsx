@@ -40,3 +40,56 @@ export function getProduct(productId) {
 		});
 	};
 }
+
+export function getProductAsAdmin(productId, onSuccess = () => {}) {
+	return (dispatch) => {
+		return ProductAPI.getProductAsAdmin(productId).then((response) => {
+			if (response.error == undefined) {
+				onSuccess(response);
+			}
+			else {
+				dispatch(apiCall.reloadAPICall("getProductAsAdmin", 5));
+			}
+		});
+	};
+}
+
+export function getProductsAsAdmin(reset = false, offset = 0, onSuccess = () => { }) {
+	return (dispatch) => {
+		return ProductAPI.getProductsbyOffset(reset, offset, true).then((response) => {
+			if (response.error == undefined) {
+				onSuccess(response);
+				dispatch(getProductsSuccess(response));
+			}
+			else {
+				dispatch(apiCall.reloadAPICall("getProductsAsAdmin", 5));
+			}
+		});
+	};
+}
+
+export function postProduct(product, onSuccess = () => { }) {
+	return (dispatch) => {
+		return ProductAPI.postProduct(product).then((response) => {
+			if (response.error == undefined) {
+				onSuccess(response);
+			}
+			else {
+				dispatch(errorPopup.displayErrorMessage(response.error.message));
+			}
+		});
+	};
+}
+
+export function updateProduct(product, onSuccess = () => { }) {
+	return (dispatch) => {
+		return ProductAPI.updateProduct(product).then((response) => {
+			if (response.error == undefined) {
+				onSuccess(response);
+			}
+			else {
+				dispatch(errorPopup.displayErrorMessage(response.error.message));
+			}
+		});
+	};
+}

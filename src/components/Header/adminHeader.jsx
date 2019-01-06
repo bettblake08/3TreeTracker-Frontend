@@ -1,55 +1,54 @@
 import React, { Component } from "react";
-import{ WEB_URL, MAIN_LOGO, API_URL} from "../../abstract/variables";
-import setSVGIcons from "../../abstract/icons";
-import axios from "axios";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+
+import{ WEB_URL, MAIN_LOGO} from "../../abstract/variables";
 import Button from "../UI/button";
+import MainHeader from "./mainHeader";
+import * as AdminAccountAuthActions from "../../actions/adminAccountAuthActions";
+
+
+class Header extends Component {
+	constructor(props) {
+		super(props);
+
+		this.setHeader = this.setHeader.bind(this);
+	}
+
+	setHeader() {
+		if(this.props.auth.userType == "admin"){
+			return (<AdminHeader actions={this.props.actions}/>);
+		}
+
+		return (<MainHeader />);
+	}
+
+	render() {
+		return (
+			<div>
+				{this.setHeader()}
+			</div>
+		);
+	}
+}
 
 class AdminHeader extends Component {
-	constructor(props){
+	constructor(props) {
 		super(props);
 
 		this.logout = this.logout.bind(this);
 
 		this.state = {
-			ajax:{
-				retrieveData:{
-					attempts:0,
-					error:0
-				}
-			},
-			seenCount:0,
-			buttons:[]
+			buttons: []
 		};
 	}
 
-	componentWillMount(){
-		document.getElementById("svg_icons").innerHTML = setSVGIcons();
+	logout() {
+		this.props.actions.auth.adminLogout();
 	}
 
-	logout(){
-		axios({
-			url: `${API_URL}admin/logout`,
-			method: "GET"
-		}).then((response) => {
-			if(response.status == 200){
-				window.location.href = `${WEB_URL}admin/login`;
-			}
-
-		}).catch((response)=>{
-			switch (response.status) {
-			default: {
-				setTimeout(() => {
-					c.getProducts();
-				}, 1000);
-				break;
-			}
-			}
-		});
-	} 
-
 	render() {
-		var component = this;
-
 		return (
 			<div className="header--active " style={{ margin: 0, padding: 0 }}>
 				<div className="header">
@@ -85,5 +84,30 @@ class AdminHeader extends Component {
 	}
 }
 
+Header.propTypes = {
+	actions: PropTypes.object.isRequired,
+	auth: PropTypes.object.isRequired
+};
 
-export default AdminHeader;
+AdminHeader.propTypes = {
+	actions: PropTypes.object.isRequired
+};
+
+function mapStateToProps(state) {
+	return {
+		auth: state.loginAuthReducer.auth
+	};
+}
+
+function mapDispatchToProps(dispatch) {
+	return {
+		actions:{
+			auth: bindActionCreators(AdminAccountAuthActions, dispatch)
+		}
+	};
+}
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Header);

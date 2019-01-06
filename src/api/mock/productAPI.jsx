@@ -89,6 +89,42 @@ class ProductAPI{
 			}, DELAY);
 		});
 	}
+
+	static postProduct(product) {
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				if (responseStatus == 201) {
+					resolve({ success: true, product });
+				}
+				else {
+					resolve({
+						error: {
+							status: responseStatus,
+							message: "Failed to access server. Please try again in a few minutes."
+						}
+					});
+				}
+			}, DELAY);
+		});
+	}
+
+	static updateProduct(product) {
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				if (responseStatus == 200) {
+					resolve({ success: true, product });
+				}
+				else {
+					resolve({
+						error: {
+							status: responseStatus,
+							message: "Failed to access server. Please try again in a few minutes."
+						}
+					});
+				}
+			}, DELAY);
+		});
+	}
 }
 
 export default ProductAPI;

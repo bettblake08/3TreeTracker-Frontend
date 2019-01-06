@@ -1,15 +1,17 @@
 import axios from "axios";
+import AdminAccountAuthAPIMock from "./mock/adminAccountAuthAPI";
+import { MOCK } from "./config";
 import { API_URL } from "../abstract/variables";
 
 class AdminAccountAuthAPI {
 	static login(loginDetails){
+		if (MOCK) return AdminAccountAuthAPIMock.login();
 
 		return new Promise((resolve) => {
 			axios({
-				url: `${API_URL}admin/loginAuth`,
+				url: `${API_URL}admin/login`,
 				method: "POST",
 				data: {
-					usernameType: loginDetails.usernameType,
 					username: loginDetails.username,
 					password: loginDetails.password
 				}
@@ -18,8 +20,11 @@ class AdminAccountAuthAPI {
 
 				switch (data.error) {
 				case 200: {
-					resolve({success:true});
-					//;
+					resolve({
+						success:true,
+						user: data.user,
+						userType: "admin"
+					});
 					break;
 				}
 				}
@@ -35,6 +40,36 @@ class AdminAccountAuthAPI {
 			});
 		});
         
+	}
+
+	static logout() {
+		if (MOCK) return AdminAccountAuthAPIMock.logout();
+
+		return new Promise((resolve) => {
+			axios({
+				url: `${API_URL}admin/logout`,
+				method: "GET"
+			}).then((response) => {
+				if (response.status == 200) {
+					resolve({success:true});
+				}
+
+			}).catch((response) => {
+				let responseStatus = response.status;
+				switch (responseStatus) {
+				default: {
+					resolve({
+						error: {
+							status: responseStatus,
+							message: "Error accessing server. Please try again later."
+						}});
+					break;
+				}
+				}
+			});
+
+		});
+
 	}
 }
 

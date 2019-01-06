@@ -3,13 +3,13 @@ import { combineReducers } from "redux";
 import productReducer from "./productReducer";
 import apiCallReducer from "./apiCallReducer";
 import placementReducer from "./placementReducer";
-import adminLoginAuthReducer from "./adminLoginAuthReducer";
+import loginAuthReducer from "./loginAuthReducer";
 import errorPopupReducer from "./errorPopupReducer";
 
 export default combineReducers({
 	productReducer,
 	apiCallReducer,
 	placementReducer,
-	adminLoginAuthReducer,
+	loginAuthReducer,
 	errorPopupReducer
 });

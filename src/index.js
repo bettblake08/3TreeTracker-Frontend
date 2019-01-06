@@ -7,9 +7,11 @@ import {AppContainer} from "react-hot-loader";
 import configureStore, {history} from "./store/configureStore";
 import Root from "./components/root";
 import "./styles/scss/main.scss";
+import initialStoreState from "./store/initialState";
+
 require("./favicon.ico");
 
-const store = configureStore();
+const store = configureStore(initialStoreState);
 
 render( 
 	<AppContainer>

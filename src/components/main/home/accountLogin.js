@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { PasswordInput } from "../../UI/newPasswordInput";
 import TextInput from "../../UI/textInput";
 import Button from "../../UI/button";
-import * as AdminAccountAuthActions from "../../../actions/adminAccountAuthActions";
+import * as AdminAccountAuthActions from "../../../actions/longrichAccountAuthActions";
 
 
 class AccountLogin extends Component {

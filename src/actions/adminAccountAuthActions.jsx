@@ -1,6 +1,6 @@
 import * as types from "./actionTypes";
-import {WEB_URL} from "../abstract/variables";
 import AdminAccountAuthAPI from "../api/adminAccountAuthAPI";
+import {history} from "../store/configureStore";
 
 export function adminLoginSuccess(data){
 	return {type: types.ADMIN_LOGIN_SUCCESS, data};
@@ -12,7 +12,26 @@ export function adminLogin(loginDetails, onSuccess = () => {}, onFailure = () =>
 			if (response.error == undefined) {
 				onSuccess();
 				dispatch(adminLoginSuccess(response));
-				window.location.href = `${WEB_URL}admin/products`;
+				history.replace("products");
+			}
+			else {
+				onFailure(response);
+			}
+		});
+	};
+}
+
+export function adminLogoutSuccess(data) {
+	return { type: types.ADMIN_LOGOUT_SUCCESS, data };
+}
+
+export function adminLogout(onSuccess = () => { }, onFailure = () => { }) {
+	return (dispatch) => {
+		return AdminAccountAuthAPI.logout().then((response) => {
+			if (response.error == undefined) {
+				onSuccess();
+				dispatch(adminLogoutSuccess(response));
+				history.replace("login");
 			}
 			else {
 				onFailure(response);

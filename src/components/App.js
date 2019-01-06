@@ -1,9 +1,10 @@
 /* eslint-disable import/no-named-as-default */
 import { Route, Switch } from "react-router-dom";
 
-import HomePage from "./main/homePage";
+import MainPlatform from "./main/index";
+import AdminPlatform from "./admin/index";
 import NotFoundPage from "./notFoundPage";
-import MainHeader from "./Header/mainHeader";
+import setSVGIcons from "../abstract/icons";
 import PropTypes from "prop-types";
 import React from "react";
 import { hot } from "react-hot-loader";
@@ -13,14 +14,16 @@ import { hot } from "react-hot-loader";
 // component at the top-level.
 
 class App extends React.Component {
+	componentDidMount(){
+		document.getElementById("svg_icons").innerHTML = setSVGIcons();
+	}
+
 	render() {
 		return (
 			<div>
-				<div>
-					<MainHeader />
-				</div>
 				<Switch>
-					<Route path="/" component={HomePage} />
+					<Route exact path="/" component={MainPlatform} />
+					<Route path="/admin" component={AdminPlatform}/>
 					<Route component={NotFoundPage} />
 				</Switch>
 			</div>
