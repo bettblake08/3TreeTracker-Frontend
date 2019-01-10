@@ -34,7 +34,7 @@
     "@ckeditor/ckeditor5-react": "^1.0.0-beta.1",
     "@nlib/human-readable": "^1.0.1",
     "axios": "^0.18.0",
-    "connected-react-router": "4.4.1",
+    "connected-react-router": "^4.4.1",
     "jspdf": "^1.4.1",
     "moment": "^2.23.0",
     "object-assign": "4.1.1",
