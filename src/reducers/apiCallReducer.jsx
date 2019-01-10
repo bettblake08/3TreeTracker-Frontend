@@ -1,5 +1,5 @@
 import * as types from "../actions/actionTypes";
-import objectAssign from "object-assign";
+import objectAssign from 'object-assign';
 
 export default (state = [], action) => {
 	let apiCall = objectAssign({}, state.apiCall);
