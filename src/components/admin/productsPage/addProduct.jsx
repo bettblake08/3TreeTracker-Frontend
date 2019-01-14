@@ -7,7 +7,7 @@ import CKEditor from "@ckeditor/ckeditor5-react";
 
 import Button from "../../UI/button";
 import ErrorPopup from "../../UI/errorPopup";
-import Repo from "../../common/repo/index";
+import Repo from "../../common/repo";
 import { DEFAULT_PRODUCT_COVER_PIC } from "../../../abstract/variables";
 import Popup from "../../UI/popup";
 import TagInput from "../../UI/tagInput";
@@ -68,11 +68,12 @@ class AddProduct extends Component {
 		textInputs.forEach((elem) => {
 			if (elem.state.inputValue == "") {
 				elem.focus();
+				return;
 			}
 		});
 
 		if (form.body == "") {
-			document.querySelector("#pro__text").focus();
+			document.querySelector("#addPro__text").focus();
 			return;
 		}
 
@@ -99,7 +100,7 @@ class AddProduct extends Component {
 	}
 
 	loadRepo() {
-		if (this.state.loaded == true) {
+		if (this.state.loaded) {
 			return (<Popup component={<Repo parent={this} sType={1} rCount={1} userType={3} />} parent={this} />);
 		}
 	}
@@ -128,14 +129,14 @@ class AddProduct extends Component {
 
 		return (
 			<div className="view--scrollable SB">
-				<div id="content--full">
+				<div className="admin content">
 					<ErrorPopup parent={this} />
 
 					<div className="base">
 						<form method="post" encType="multipart/form-data" style={{ margin: 0, padding: 0 }}>
 							{/* <!-- IMAGE SELECT AREA--> */}
 
-							<div id="pro__image">
+							<div id="addPro__image">
 								<div id="img_select">
 									<div id="img_select__img" className="repoImagePreview" style={placeholder}>
 										<input type="hidden" id="art_selected_image" name="image" />
@@ -156,9 +157,9 @@ class AddProduct extends Component {
 
 							{/* <!-- IMAGE SELECT AREA--> */}
 
-							<div id="pro__form" >
+							<div id="addPro__form" >
 								{/* <!-- PRODUCT TITLE AREA--> */}
-								<div id="pro__title">
+								<div id="addPro__title">
 									<TextInput
 										parent={this}
 										status={0}
@@ -175,9 +176,9 @@ class AddProduct extends Component {
 								{/* <!-- PRODUCT TITLE AREA--> */}
 
 								{/* <!-- PRODUCT TEXT AREA--> */}
-								<div id="pro__textBox">
-									<div id="pro__textBox__label" className="f_h1 f_text-capitalize">Body Text</div>
-									<div id="pro__textBox__input ck--1">
+								<div id="addPro__textBox">
+									<div id="addPro__textBox__label" className="f_h1 f_text-capitalize">Body Text</div>
+									<div id="addPro__textBox__input ck--1">
 										<CKEditor
 											editor={BalloonEditor}
 											data={this.state.form.body}
@@ -191,7 +192,7 @@ class AddProduct extends Component {
 								{/* <!-- PRODUCT TEXT AREA--> */}
 
 								{/* <!-- PRODUCT SUMMARY AREA--> */}
-								<div id="pro__summaryBox">
+								<div id="addPro__summaryBox">
 									<MultiLineText
 										parent={this}
 										status={0}
@@ -206,14 +207,14 @@ class AddProduct extends Component {
 								{/* <!-- PRODUCT SUMMARY AREA--> */}
 
 
-								<div id="pro__summaryBox">
-									<div id="pro__summaryBox__label" className="f_h1 f_text-capitalize">Tags</div>
-									<div id="pro__summaryBox__input" >
+								<div id="addPro__summaryBox">
+									<div id="addPro__summaryBox__label" className="f_h1 f_text-capitalize">Tags</div>
+									<div id="addPro__summaryBox__input" >
 										<TagInput main={this} parent={this} />
 									</div>
 								</div>
 
-								<div id="pro__save">
+								<div id="addPro__save">
 									<Button parent={this} status={0} config={{
 										label: "Save",
 										action: this.productSubmit,
@@ -222,7 +223,7 @@ class AddProduct extends Component {
 									}} />
 								</div>
 
-								<div id="pro__return">
+								<div id="addPro__return">
 									<Button parent={this} status={0} config={{
 										label: "Back",
 										action: () => {

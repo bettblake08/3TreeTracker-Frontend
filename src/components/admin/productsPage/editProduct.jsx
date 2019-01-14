@@ -54,10 +54,9 @@ class EditProduct extends Component {
 
 	getProduct() {
 		var component = this;
-		var state = component.state;
         
 		ProductAPI.getProductAsAdmin(
-			state.productId,
+			this.state.productId,
 			(response) => {
 				component.setState({updated: true, product: response.data.content});
 				component.setCoverImage();

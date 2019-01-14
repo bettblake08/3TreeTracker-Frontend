@@ -7,6 +7,7 @@ import AdminHeader from "../header/adminHeader";
 import LoginPage from "./loginPage";
 import ProductsPage from "./productsPage";
 import AccountsPage from "./accountsPage";
+import RepoPage from "./repoPage";
 import SideBar from "../admin/sidebar";
 
 import "../../styles/scss/admin.scss";
@@ -32,13 +33,14 @@ class AdminPlatform extends Component {
 			<div>
 				<AdminHeader />
 
-				<div className="main">
+				<div className="admin main">
 					<SideBar />
 					
 					<Switch>
 						<Route path={`${path}/login`} component={LoginPage} />
 						<Route path={`${path}/products`} render={() => this.checkIfLoggedIn(ProductsPage)} />
 						<Route path={`${path}/accounts`} render={() => this.checkIfLoggedIn(AccountsPage)} />
+						<Route path={`${path}/repo`} render={() => this.checkIfLoggedIn(RepoPage)} />
 					</Switch>
 				</div>
 			</div>

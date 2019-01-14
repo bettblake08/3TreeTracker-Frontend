@@ -6,7 +6,6 @@ import AddProduct from "./productsPage/addProduct";
 import EditProduct from "./productsPage/editProduct";
 
 import "../../styles/scss/pages/admin/products.scss";
-
 class Products extends Component {
 	constructor(props) {
 		super(props);
@@ -22,14 +21,12 @@ class Products extends Component {
 	}
 
 	setView(option) {
-		var state = this.state;
-		state.view = option;
-		this.setState(state);
+		this.setState({view: option});
 	}
 
 	render() {
 		return (
-			<div id="section_1" className="SB">
+			<div className="admin section__1 SB productsPage">
 				<ErrorPopup />
 
 				<div className={`view--${this.state.view == 1 ? "active": "disabled"}`}>

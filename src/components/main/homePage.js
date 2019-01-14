@@ -28,7 +28,6 @@ class HomePage extends Component {
 	render() {
 		var viewClass = "view__options";
 		viewClass += "--" + this.state.view;
-
 		return (
 
 			<div id="section_1">

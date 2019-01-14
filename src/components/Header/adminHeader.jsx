@@ -8,7 +8,6 @@ import Button from "../UI/button";
 import MainHeader from "./mainHeader";
 import * as AdminAccountAuthActions from "../../actions/adminAccountAuthActions";
 
-
 class Header extends Component {
 	constructor(props) {
 		super(props);
@@ -49,8 +48,9 @@ class AdminHeader extends Component {
 	}
 
 	render() {
+		
 		return (
-			<div className="header--active " style={{ margin: 0, padding: 0 }}>
+			<div className="admin header--active" style={{ margin: 0, padding: 0 }}>
 				<div className="header">
 					<div className="header__left">
 						<a href={`${WEB_URL}admin/home`}>

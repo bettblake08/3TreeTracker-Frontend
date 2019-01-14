@@ -1,12 +1,10 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
+import {connect} from "react-redux";
 
 class RepoCategoryView extends Component {
-	constructor(props) {
-		super(props);
-	}
-
 	render() {
-		var repo = this.props.main;
+		let repoMainComponent = this.props.main;
 		const inActive = {
 			display: "none"
 		};
@@ -21,9 +19,10 @@ class RepoCategoryView extends Component {
 					<div className="repo__categoryView__head btn_1--normal f_button_1 f_text-uppercase">All</div>
 				</div>
 
-				<div className="repo__categoryView__menu" style={repo.state.selection_type == 0 ? inActive : active}>
-					<div className="repo__categoryView__head btn_1--success f_button_1 f_text-capitalize" onClick={() => { repo.repoFileSelected(); }}>select</div>
-					<div className="repo__categoryView__head btn_1--danger f_button_1 f_text-capitalize" onClick={() => { repo.exitRepo(); }} >cancel</div>
+				<div className="repo__categoryView__menu"
+					style={this.props.repo.settings.selectionType == 0 ? inActive : active}>
+					<div className="repo__categoryView__head btn_1--success f_button_1 f_text-capitalize" onClick={() => { repoMainComponent.repoFileSelected(); }}>select</div>
+					<div className="repo__categoryView__head btn_1--danger f_button_1 f_text-capitalize" onClick={() => { repoMainComponent.exitRepo(); }} >cancel</div>
 				</div>
 
 			</div>
@@ -31,4 +30,15 @@ class RepoCategoryView extends Component {
 	}
 }
 
-export default RepoCategoryView;
+RepoCategoryView.propTypes = {
+	main: PropTypes.object.isRequired,
+	repo: PropTypes.object.isRequired
+};
+
+function mapStateToProps(state){
+	return {
+		repo: state.repoReducer.repo
+	};
+}
+
+export default connect(mapStateToProps)(RepoCategoryView);

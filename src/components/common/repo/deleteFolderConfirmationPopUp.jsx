@@ -1,16 +1,8 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
+import {connect} from "react-redux";
 
 class DeleteFolderConfirmationPopUp extends Component {
-	constructor(props) {
-		super(props);
-		this.confirm = this.confirm.bind(this);
-	}
-
-	confirm() {
-		this.props.repo.state.folderInFocus.deleteFolderFromRepo(true);
-		this.props.repo.toggleDeleteFolderConfirmationPopUp();
-	}
-
 	render() {
 		return (
 			<div className="deletePP">
@@ -24,7 +16,10 @@ class DeleteFolderConfirmationPopUp extends Component {
 					</div>
 
 					<div className="deletePP__buttons__button">
-						<div className="btn_1--success f_button_2 f_text-capitalize" onClick={() => { this.confirm(); }}>Confirm</div>
+						<div className="btn_1--success f_button_2 f_text-capitalize" onClick={() => { 
+							this.props.repo.state.folderInFocus.deleteFolderFromRepo(true);
+							this.props.repo.toggleDeleteFolderConfirmationPopUp();
+						}}>Confirm</div>
 					</div>
 
 				</div>
@@ -33,4 +28,14 @@ class DeleteFolderConfirmationPopUp extends Component {
 	}
 }
 
-export default DeleteFolderConfirmationPopUp;
+DeleteFolderConfirmationPopUp.propTypes = {
+	repo: PropTypes.object.isRequired
+};
+
+function mapStatetoProps(state){
+	return {
+		repo: state.repoReducer.repo
+	};
+}
+
+export default connect(mapStatetoProps)(DeleteFolderConfirmationPopUp);

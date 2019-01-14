@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { API_URL} from "../../abstract/variables";
-import ErrorPopup from "../UI/errorPopup";
+import { API_URL } from "../../../abstract/variables";
+import ErrorPopup from "../../UI/errorPopup";
 
 class CommentingSystem extends Component {
-	constructor(props){
+	constructor(props) {
 		super(props);
 
 		this.setCommentInput = this.setCommentInput.bind(this);
@@ -15,10 +15,10 @@ class CommentingSystem extends Component {
 		this.clearComments = this.clearComments.bind(this);
 
 		this.state = {
-			errorPopup:{},
-			preview: this.props.preview == undefined ? {state:false,count:0} : this.props.preview,
-			userId:"",
-			comments:{
+			errorPopup: {},
+			preview: this.props.preview == undefined ? { state: false, count: 0 } : this.props.preview,
+			userId: "",
+			comments: {
 				data: []
 			},
 			ajax: {
@@ -30,18 +30,15 @@ class CommentingSystem extends Component {
 		};
 	}
 
-	componentDidMount(){
-		var state = this.props.parent.state;
-		state.commentingSystem = this;
-		this.props.parent.setState(state);
-
+	componentDidMount() {
+		this.props.parent.setState({commentingSystem: this});
 		this.getComments();
 	}
 
-	clearComments(){
+	clearComments() {
 		var state = this.state;
 
-		if (state.comments.data.length > 0 ){
+		if (state.comments.data.length > 0) {
 			state.comments = {
 				data: []
 			};
@@ -50,7 +47,7 @@ class CommentingSystem extends Component {
 		}
 	}
 
-	setCommentInput(){
+	setCommentInput() {
 		return <CommentInput main={this} />;
 	}
 
@@ -62,9 +59,9 @@ class CommentingSystem extends Component {
 			comments = comments.reverse();
 
 			return (
-				comments.map((item,i)=>{
-					if(preview.state == true && preview.count <= i){   return;  }
-					else{
+				comments.map((item, i) => {
+					if (preview.state == true && preview.count <= i) { return; }
+					else {
 						return <Comment key={i} comment={item} main={this} />;
 					}
 				})
@@ -102,8 +99,8 @@ class CommentingSystem extends Component {
 		var state = this.state;
 		var url = API_URL;
 
-		switch(this.props.commentingOn){
-		case 1:{
+		switch (this.props.commentingOn) {
+		case 1: {
 			url += "comment/" + this.props.product.post.id;
 			break;
 		}
@@ -112,13 +109,13 @@ class CommentingSystem extends Component {
 		url += state.comments.data.length == 0 || state.comments.data == undefined ? "/1/0" : "/1/" + state.comments.data.length;
 
 		axios({
-			url:url,
-			method:"GET"
-		}).then((response)=>{
+			url: url,
+			method: "GET"
+		}).then((response) => {
 			var data = response.data;
 
-			switch(response.status){
-			case 200:{
+			switch (response.status) {
+			case 200: {
 				if (data.content != []) {
 					state.comments.data = data.content.concat(state.comments.data);
 					state.userId = data.userId;
@@ -127,36 +124,36 @@ class CommentingSystem extends Component {
 				break;
 			}
 			}
-            
-		}).catch(() =>{
+
+		}).catch(() => {
 			component.reloadAjaxRequest(1);
 		});
 
 	}
 
-	toggleViewAll(){
+	toggleViewAll() {
 		var state = this.state;
-		state.preview.state = state.preview.state == false ? true :false;
+		state.preview.state = state.preview.state == false ? true : false;
 		this.setState(state);
 	}
 
-	setToggleViewAll(){
+	setToggleViewAll() {
 		var state = this.state;
 
-		if(state.preview.count > 0 && state.comments.data.length > state.preview.count){
+		if (state.preview.count > 0 && state.comments.data.length > state.preview.count) {
 			var text = state.preview.state ? "View more ..." : "Collapse";
 			return (<div className="commentSection__vMore f_normal" onClick={() => { this.toggleViewAll(); }}>{text}</div>);
 		}
 		else {
 			return (<div></div>);
 		}
-        
+
 	}
 
 	render() {
 		return (
 			<div className="commentSection">
-				<ErrorPopup parent={this}/>
+				<ErrorPopup parent={this} />
 				<div className="commentSection__title f_h1">{this.state.comments.data.length + " comments"}</div>
 				{this.setCommentInput()}
 				{this.setComments()}

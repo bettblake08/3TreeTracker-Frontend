@@ -1,10 +1,7 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 
 class RepoImageFile extends Component {
-	constructor(props) {
-		super(props);
-	}
-
 	render() {
 		var file = this.props.repoFile.props.file;
 		var state = this.props.repoFile.state;
@@ -51,7 +48,7 @@ class RepoImageFile extends Component {
 				<div className={state.toggle ? "repoFile__front" : "repoFile__back"}>
 					<div className="repoFile__menu">
 						<div className="repoFile__menu__option">
-							<a href={`${state.dir}${file.name}.${file.type}`} target="_blank">
+							<a href={`${state.dir}${file.name}.${file.type}`} target="_blank" rel="noopener noreferrer">
 
 								<div className="iconBtn">
 									<svg className="icon">
@@ -88,5 +85,10 @@ class RepoImageFile extends Component {
 		);
 	}
 }
+
+
+RepoImageFile.propTypes = {
+	repoFile: PropTypes.object.isRequired
+};
 
 export default RepoImageFile;

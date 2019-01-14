@@ -100,7 +100,9 @@ export default {
 					{
 						loader: "css-loader",
 						options: {
-							sourceMap: true
+							sourceMap: true,
+							modules: false,
+							minimize: true
 						}
 					}, {
 						loader: "postcss-loader",
@@ -108,7 +110,8 @@ export default {
 							plugins: () => [
 								require("autoprefixer")
 							],
-							sourceMap: true
+							sourceMap: true,
+							ident: "postcss",
 						}
 					}, {
 						loader: "sass-loader",

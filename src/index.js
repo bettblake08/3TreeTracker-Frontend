@@ -8,9 +8,6 @@ import configureStore, {history} from "./store/configureStore";
 import Root from "./components/root";
 import initialStoreState from "./store/initialState";
 
-import "./styles/scss/main.scss";
-
-
 require("./favicon.ico");
 
 const store = configureStore(initialStoreState);

@@ -7,7 +7,7 @@ import CKEditor from "@ckeditor/ckeditor5-react";
 
 import * as ProductActions from "../../../actions/productActions";
 import Button from "../../UI/button";
-import Repo from "../../common/repo/index";
+import Repo from "../../common/repo";
 import Popup from "../../UI/popup";
 import TagInput from "../../UI/tagInput";
 import TextInput from "../../UI/textInput";
@@ -132,7 +132,7 @@ class Edit extends Component {
 	}
 
 	loadRepo() {
-		if (this.state.loaded == true) {
+		if (this.state.loaded) {
 			return (<Popup 
 				component={
 					<Repo 
@@ -149,7 +149,7 @@ class Edit extends Component {
 		var parent = this.props.parent.props.parent;
 
 		return (
-			<div id="editProduct">
+			<div id="editProduct" className="admin content">
 				<div className={this.state.toggleRepo ? "base--disabled" : "base"}>
 					<form method="post" encType="multipart/form-data">
 						{/* <!-- IMAGE SELECT AREA--> */}

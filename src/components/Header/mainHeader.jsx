@@ -51,8 +51,7 @@ class MainHeader extends Component {
 	}
 
 	render() {
-		var headerClass = " header container-fluid ";
-		this.state.toggleHeader == 0 ? headerClass += "header--normal" : headerClass += "header--float";
+		var headerClass = `header header--${this.state.toggleHeader == 0 ? "normal" : "float"}`;
 		var popupMenu = "popupMenu";
 
 		var menuLinks = [
@@ -69,36 +68,38 @@ class MainHeader extends Component {
 		];
 
 		return (
-			<div className={headerClass}>
-				<div className="row">
-					<div className="header__left">
-						<Link to="/">
-							<div className="header__logo">
-								<img src={MAIN_LOGO} />
-							</div>
-						</Link>
-						<div className="header__title f_banner_1">Longrich</div>
-					</div>
-
-					<div className="header__right">
-						<div className="header__right__menuBtn btn_icon--normal" onClick={() => { this.togglePopupMenu(1); }}>
-							<svg className="icon">
-								<use xlinkHref="#menu" />
-							</svg>
+			<div className="main">
+				<div className={headerClass}>
+					<div className="row">
+						<div className="header__left">
+							<Link to="/">
+								<div className="header__logo">
+									<img src={MAIN_LOGO} />
+								</div>
+							</Link>
+							<div className="header__title f_banner_1">Longrich</div>
 						</div>
 
-						<div className="header__right__text f_normal f_text-capitalize t-56"></div>
+						<div className="header__right">
+							<div className="header__right__menuBtn btn_icon--normal" onClick={() => { this.togglePopupMenu(1); }}>
+								<svg className="icon">
+									<use xlinkHref="#menu" />
+								</svg>
+							</div>
+
+							<div className="header__right__text f_normal f_text-capitalize t-56"></div>
 
 
+						</div>
 					</div>
-				</div>
 
-				<div className={this.state.togglePopupMenu == 1 ? popupMenu + "--active" : popupMenu + "--disabled"}>
-					<div className="popupMenu__mainMenu">
-						<MenuType1 menu={menuLinks} opposite={true} />
+					<div className={this.state.togglePopupMenu == 1 ? popupMenu + "--active" : popupMenu + "--disabled"}>
+						<div className="popupMenu__mainMenu">
+							<MenuType1 menu={menuLinks} opposite={true} />
+						</div>
 					</div>
-				</div>
 
+				</div>
 			</div>
 		);
 	}

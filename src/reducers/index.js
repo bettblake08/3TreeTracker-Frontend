@@ -5,11 +5,13 @@ import apiCallReducer from "./apiCallReducer";
 import placementReducer from "./placementReducer";
 import loginAuthReducer from "./loginAuthReducer";
 import errorPopupReducer from "./errorPopupReducer";
+import repoReducer from "./repoReducer";
 
 export default combineReducers({
 	productReducer,
 	apiCallReducer,
 	placementReducer,
 	loginAuthReducer,
-	errorPopupReducer
+	errorPopupReducer,
+	repoReducer
 });

@@ -1,27 +1,23 @@
 import React, { Component } from "react";
-import axios from "axios";
 import ReactDOMServer from "react-dom/server";
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+import PropTypes from "prop-types";
 
-import qq from "../../../plugins/fineUploader/fine-uploader";
+import qq from "../../../../plugins/fineUploader/fine-uploader";
+import {API_URL} from "../../../abstract/variables";
+import * as RepoActions from "../../../actions/repoActions";
 
 class RepoFileUpload extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			pending_upload_file: "",
-			ajax: {
-				uploadFiletoRepo: {
-					attempts: 0,
-					error: 0
-				}
-			}
+			pendingUploadFile: ""
 		};
 
 		this.setRepoFileUploadedName = this.setRepoFileUploadedName.bind(this);
-		this.uploadFiletoRepo = this.uploadFiletoRepo.bind(this);
 		this.qqTemplate = this.qqTemplate.bind(this);
-		this.reloadAjaxRequest = this.reloadAjaxRequest.bind(this);
 		this.toggleUploadFileDisplay = this.toggleUploadFileDisplay.bind(this);
 	}
 
@@ -37,8 +33,6 @@ class RepoFileUpload extends Component {
 	}
 
 	componentDidUpdate() {
-		var repo = this.props.values.repo;
-
 		document.getElementById("uploader").innerHTML = "";
 		//$('#uploader').html("");
 
@@ -58,9 +52,9 @@ class RepoFileUpload extends Component {
 			maxAutoAttempts: 10,
 			autoUpload: false,
 			request: {
-				endpoint: repo.state.url.uploadFiletoRepo,
+				endpoint: `${API_URL}admin/uploadFiletoRepo/`,
 				params: {
-					folderId: this.props.values.folderId
+					folderId: this.props.repo.currentFolder.id
 				}
 			},
 			validation: {
@@ -70,7 +64,7 @@ class RepoFileUpload extends Component {
 			enableTooltip: true,
 			callbacks: {
 				onComplete: function () {
-					repo.retrieveRepoContent();
+					this.props.actions.repo.getRepoContent();
 				}
 			}
 		});
@@ -78,39 +72,12 @@ class RepoFileUpload extends Component {
 		document.querySelector(".qq-trigger-upload").addEventListener("click", () => {
 			uploader.uploadStoredFiles();
 		});
-
-		/* 
-            $('.qq-trigger-upload').click(function (params) {
-            uploader.uploadStoredFiles();
-        }); */
+		
 	}
 
 	setRepoFileUploadedName() {
 		var fileName = document.querySelector("#repoUploadedFile").value;
-		var state = this.state;
-		state.pending_upload_file = fileName;
-		this.setState(state);
-	}
-
-	reloadAjaxRequest(option) {
-		var state = this.state;
-
-		switch (option) {
-		case 1: {
-
-			if (state.ajax.uploadFiletoRepo.attempts < 10) {
-				state.ajax.uploadFiletoRepo.attempts += 1;
-				this.setState(state);
-				this.uploadFiletoRepo();
-			}
-			else {
-				state.ajax.uploadFiletoRepo.error = "Access to server failed. Try again Later! ";
-				this.setState(state);
-			}
-			break;
-		}
-		}
-
+		this.setState({ pendingUploadFile: fileName });
 	}
 
 	qqTemplate() {
@@ -201,60 +168,14 @@ class RepoFileUpload extends Component {
 	}
 
 	toggleUploadFileDisplay() {
-		var state = this.props.values.repo;
-		state.uploadFileDisplay = state.uploadFileDisplay ? false : true;
-		this.props.values.repo.setState(state);
+		var mainRepoComponent = this.props.main;
+		mainRepoComponent.setState({uploadFileDisplay: !mainRepoComponent.state.uploadFileDisplay});
 	}
-
-	/* API */
-
-	uploadFiletoRepo() {
-		/* var formData = new FormData($('#repoFileUpload__form')[0]);
-        var errorBox = $('.repoFileUpload__errorBox');
-        var button = $('.repoFileUpload__button .btn_1'); */
-
-		var formData = new FormData(document.getElementById("repoFileUpload__form")[0]);
-		//var errorBox = document.querySelector('.repoFileUpload__errorBox');
-		//var button = document.querySelector('.repoFileUpload__button .btn_1');
-
-		var repo = this.props.values.repo;
-		var component = this;
-		var state = this.state;
-		formData.append("folderId", this.props.values.folderId);
-
-		axios({
-			url: repo.state.url.uploadFileToRepo,
-			method: "POST",
-			data: formData
-		}).then((response) => {
-			var data = response.data;
-
-			switch (data.error) {
-			case 0: {
-				component.toggleUploadFileDisplay();
-				repo.retrieveRepoContent();
-				break;
-			}
-			case 1: {
-				break;
-			}
-			}
-
-			state.ajax.uploadFiletoRepo.attempts = 0;
-			component.setState(state);
-		}).catch(() => {
-			component.reloadAjaxRequest(1);
-		});
-
-	}
-
-	/* API */
-
 
 	render() {
 
 		return (
-			<div className={this.props.values.repo.state.uploadFileDisplay ? "repoFileUpload--active" : "repoFileUpload--disabled"} ref={el => (this.instance = el)}>
+			<div className={`repoFileUpload--${this.props.repo.uploadFileDisplay ? "active" : "disabled"}`} ref={el => (this.instance = el)}>
 				<div className="repoFileUpload__main">
 
 					<div id="uploader" ref={(u) => { this.uploader = u; }}>
@@ -268,5 +189,24 @@ class RepoFileUpload extends Component {
 	}
 }
 
+RepoFileUpload.propTypes = {
+	actions: PropTypes.object.isRequired,
+	repo: PropTypes.object.isRequired,
+	main: PropTypes.object.isRequired
+};
 
-export default RepoFileUpload;
+function mapStateToProps(state){
+	return {
+		repo: state.repoReducer.repo
+	};
+}
+
+function mapDispatchToProps(dispatch){
+	return {
+		actions: {
+			repo: bindActionCreators(RepoActions, dispatch)
+		}
+	};
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(RepoFileUpload);

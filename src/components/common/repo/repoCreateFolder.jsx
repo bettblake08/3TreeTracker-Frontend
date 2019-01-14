@@ -1,8 +1,12 @@
 import React, { Component } from "react";
-import axios from "axios";
+import {bindActionCreators} from "redux";
+import PropTypes from "prop-types";
+import {connect} from "react-redux";
 
-import Button from "../UI/button";
-import TextInput from "../UI/textInput";
+import Button from "../../UI/button";
+import TextInput from "../../UI/textInput";
+
+import * as RepoActions from "../../../actions/repoActions";
 
 class RepoCreateFolder extends Component {
 	constructor(props) {
@@ -10,48 +14,16 @@ class RepoCreateFolder extends Component {
 
 		this.state = {
 			buttons: [],
-			textInputs: [],
-			ajax: {
-				createFolderinRepo: {
-					attempts: 0,
-					error: 0
-				}
-			}
+			textInputs: []
 		};
+
 		this.createFolderinRepo = this.createFolderinRepo.bind(this);
-		this.reloadAjaxRequest = this.reloadAjaxRequest.bind(this);
 		this.toggleCreateFolderDisplay = this.toggleCreateFolderDisplay.bind(this);
 	}
 
-
-	reloadAjaxRequest(option) {
-		var state = this.state;
-		switch (option) {
-		case 1: {
-
-			if (state.ajax.createFolderinRepo.attempts < 10) {
-				state.ajax.createFolderinRepo.attempts += 1;
-				this.setState(state);
-				this.createFolderinRepo();
-			}
-			else {
-				this.state.vaiues.repo.state.errorPopup.displayError("Access to server failed. Try again Later! ");
-				state.ajax.createFolderinRepo.attempts = 0;
-				this.setState(state);
-			}
-			break;
-		}
-		}
-
-	}
-
 	toggleCreateFolderDisplay() {
-		var state = this.props.values.repo.state;
-		state.toggleCreateFolderDisplay = state.toggleCreateFolderDisplay ? false : true;
-		this.props.values.repo.setState(state);
+		this.props.actions.repo.toggleCreateRepoFolderDisplay();
 	}
-
-	/* API */
 
 	createFolderinRepo() {
 		var inputName = this.state.textInputs[0];
@@ -61,50 +33,29 @@ class RepoCreateFolder extends Component {
 			return;
 		}
 
-		var folderId = this.props.values.folderId;
-		var repo = this.props.values.repo;
-
-		var component = this;
 		var state = this.state;
-
 		state.buttons[0].state.status = 3;
-		component.setState(state);
+		this.setState(state);
 
-		axios({
-			url: repo.state.url.createFolderinRepo,
-			method: "POST",
-			data: {
-				parentId: folderId,
-				name: state.textInputs[0].state.inputValue
-			}
-		}).then((response) => {
-			switch (response.data.error) {
-			case 0: {
-				state.buttons[0].state.status = 2;
-				component.setState(state);
+		const onSuccess = () => {
+			state.buttons[0].state.status = 2;
+			this.setState(state);
 
-				component.toggleCreateFolderDisplay();
-				repo.retrieveRepoContent();
-				break;
-			}
-			case 1: {
-				state.buttons[0].state.status = 1;
-				break;
-			}
-			}
+			this.toggleCreateFolderDisplay();
+			this.props.actions.repo.getRepoContent();
+		};
 
-			state.ajax.createFolderinRepo.attempts = 0;
-			component.setState(state);
-		});
+		const onFailure = () => {
+			state.buttons[0].state.status = 1;
+			this.setState(state);
+		};
 
+		this.props.actions.repo.createFolderinRepo(state.textInputs[0].state.inputValue, onSuccess, onFailure);
 	}
 
-	/* API */
-
 	render() {
-
 		return (
-			<div className={this.props.values.repo.state.createFolderDisplay ? "repoCreateFolder--active" : "repoCreateFolder--disabled"}>
+			<div className={`repoCreateFolder--${this.props.repo.createFolderDisplay ? "active" : "disabled"}`}>
 				<form id="repoCreateFolder__form" action="#" method="post" encType="multipart/form-data">
 					<div className="repoCreateFolder__input">
 						<TextInput parent={this} status={0} config={{
@@ -114,7 +65,15 @@ class RepoCreateFolder extends Component {
 						}} />
 
 						<div className="repoCreateFolder__button">
-							<Button parent={this} status={0} config={{ label: "Add", action: this.createFolderinRepo, type: "btn_1", text: "" }} />
+							<Button 
+								parent={this} 
+								status={0} 
+								config={{ 
+									label: "Add",
+									action: this.createFolderinRepo,
+									type: "btn_1",
+									text: ""
+								}} />
 						</div>
 					</div>
 
@@ -125,4 +84,23 @@ class RepoCreateFolder extends Component {
 	}
 }
 
-export default RepoCreateFolder;
+RepoCreateFolder.propTypes = {
+	actions: PropTypes.object.isRequired,
+	repo: PropTypes.object.isRequired
+};
+
+function mapStateToProps(state){
+	return {
+		repo: state.repoReducer.repo
+	};
+}
+
+function mapDispatchToProps(dispatch){
+	return {
+		actions: {
+			repo: bindActionCreators(RepoActions, dispatch)
+		}
+	};
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(RepoCreateFolder);

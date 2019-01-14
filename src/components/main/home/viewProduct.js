@@ -3,8 +3,9 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import axios from "axios";
 import StickyBox from "react-sticky-content";
+
 import {WEB_URL, API_URL, DEFAULT_PRODUCT_COVER_PIC} from "../../../abstract/variables";
-import CommentingSystem from "../../common/commentingSystem";
+import CommentingSystem from "../../common/commentSystem";
 import ErrorPopup from "../../UI/errorPopup";
 import ButtonWithIcon from "../../UI/buttonWithIcon";
 

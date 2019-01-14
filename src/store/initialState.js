@@ -1,4 +1,5 @@
 import {getLoggedInUser} from "../helper/auth";
+import {WEB_URL} from "../abstract/variables";
 
 export default {
 	productReducer: {
@@ -24,6 +25,28 @@ export default {
 	errorPopupReducer: {
 		errorPopup: { 
 			errors: [] 
+		}
+	},
+	repoReducer:{
+		repo: {
+			mainComponent: {},
+			currentFolder: {
+				id: "root"
+			},
+			folderIds: ["root"],
+			folderDirs: ["root"],
+			foldersLoaded: [],
+			folders: [],
+			files: [],
+			cached: {
+				folderIds: []
+			},
+			fileInFocus: {},
+			folderInFocus: {},
+			selectedFiles: [],
+			contentdir: `${WEB_URL}repo/`,
+			createFolderDisplay: false,
+			uploadFileDisplay: false
 		}
 	}
 };

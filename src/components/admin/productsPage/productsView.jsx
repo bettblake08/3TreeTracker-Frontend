@@ -33,9 +33,9 @@ class ProductsView extends Component {
 	render() {
 		var c = this;
 		return (
-			<div id="content">
+			<div className="admin content">
 				<div className="topBar row">
-					<div className="topBar__title f_h1 f_text-left f_text-capitalize"></div>
+					<div className="topBar__title f_h1 f_text-left f_text-capitalize">Products</div>
 					<div className="topBar__right">
 
 						<div className="topBar__right__add">

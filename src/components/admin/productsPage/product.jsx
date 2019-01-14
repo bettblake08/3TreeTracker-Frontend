@@ -20,8 +20,8 @@ class Product extends Component {
 		var ctime = moment.duration(time.diff(moment()), "milliseconds").humanize();
 
 		return (
-			<div className="pro--1__con" id={"p-" + post.log.id}>
-				<div className="pro--1__con__up" style={image}
+			<div className="product--1__con" id={`p-${post.log.id}`}>
+				<div className="product--1__con__up" style={image}
 					onClick={
 						() => {
 							parent.setView(3);
@@ -29,49 +29,49 @@ class Product extends Component {
 							parent.state.EditProduct.getProduct();
 						}}></div>
 
-				<div className="pro--1__con__down">
+				<div className="product--1__con__down">
 
-					<div className="pro--1__title f_h1 f_text-capitalize">{post.post.title}</div>
-					<div className="pro--1__time f_comment_1 f_text-capitalize ">{ctime + " ago"}</div>
-					<div className="pro--1__text f_normal">{post.post.summary}</div>
+					<div className="product--1__title f_h1 f_text-capitalize">{post.post.title}</div>
+					<div className="product--1__time f_comment_1 f_text-capitalize ">{ctime + " ago"}</div>
+					<div className="product--1__text f_normal">{post.post.summary}</div>
 
-					<div className="pro--1__stat">
-						<div className="pro--1__stat__view">
-							<div className="pro--1__stat__icon">
+					<div className="product--1__stat">
+						<div className="product--1__stat__view">
+							<div className="product--1__stat__icon">
 								<div className="iconBtn--normal">
 									<svg className="icon">
 										<use xlinkHref="#view" />
 									</svg>
 								</div>
 							</div>
-							<div className="pro--1__stat__value f_h2 f_text-bold">{humanize(post.post.stat.views)}</div>
+							<div className="product--1__stat__value f_h2 f_text-bold">{humanize(post.post.stat.views)}</div>
 						</div>
 
-						<div className="pro--1__stat__likes">
-							<div className="pro--1__stat__icon">
+						<div className="product--1__stat__likes">
+							<div className="product--1__stat__icon">
 								<div className="iconBtn--normal">
 									<svg className="icon">
 										<use xlinkHref="#like" />
 									</svg>
 								</div>
 							</div>
-							<div className="pro--1__stat__value f_h2 f_text-bold">{humanize(post.post.stat.reactions)}</div>
+							<div className="product--1__stat__value f_h2 f_text-bold">{humanize(post.post.stat.reactions)}</div>
 						</div>
 
-						<div className="pro--1__stat__com">
-							<div className="pro--1__stat__icon">
+						<div className="product--1__stat__com">
+							<div className="product--1__stat__icon">
 								<div className="iconBtn--normal">
 									<svg className="icon">
 										<use xlinkHref="#communication" />
 									</svg>
 								</div>
 							</div>
-							<div className="pro--1__stat__value f_h2 f_text-bold">{humanize(post.post.stat.comments)}</div>
+							<div className="product--1__stat__value f_h2 f_text-bold">{humanize(post.post.stat.comments)}</div>
 						</div>
 
 
 
-						<div className="pro--1__edit"
+						<div className="product--1__edit"
 							onClick={
 								() => {
 									parent.setView(3);

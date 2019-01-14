@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 
 class RepoDocFile extends Component {
 	render() {
@@ -25,7 +26,7 @@ class RepoDocFile extends Component {
 		}
 
 		return (
-			<div className={state.selected == true ? state.selectedClass.true : state.selectedClass.false}
+			<div className={state.selected? state.selectedClass.true : state.selectedClass.false}
 				id={"fl-" + fileId}>
 
 				<div className="repoFile__front" onClick={() => { this.props.repoFile.repoFileSelect(); }}>
@@ -50,7 +51,7 @@ class RepoDocFile extends Component {
 					<div className="repoFile__menu">
 
 						<div className="repoFile__menu__option ">
-							<a href={this.props.repoFile.state.dir + "/" + file.name + "." + file.type} target="_blank" >
+							<a href={`${this.props.repoFile.state.dir}/${file.name}.${file.type}`} target="_blank" rel="noopener noreferrer">
 								<div className="iconBtn">
 									<svg className="icon">
 										<use xlinkHref="#view" />
@@ -85,5 +86,9 @@ class RepoDocFile extends Component {
 		);
 	}
 }
+
+RepoDocFile.propTypes = {
+	repoFile: PropTypes.object.isRequired
+};
 
 export default RepoDocFile;
