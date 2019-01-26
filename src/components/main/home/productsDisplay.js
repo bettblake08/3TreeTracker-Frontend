@@ -69,8 +69,8 @@ function mapStateToProps(state) {
 	let products = state.productReducer.products;
 	return {
 		products: {
-			content: products == undefined ? []: products.content,
-			offset: products == undefined ? 0 : products.offset
+			content: products.content,
+			offset: products.offset
 		}
 	};
 }

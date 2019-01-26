@@ -2,7 +2,8 @@ import * as types from "./actionTypes";
 import RepoAPI from "../api/repoAPI";
 import * as ErrorPopup from "../actions/errorPopupActions";
 import * as apiCall from "./apiCallActions";
-import {history} from "../store/configureStore";
+import {checkIfUnauthorized} from "./helpers";
+
 
 export function getRepoContentSuccess(data) {
 	return (dispatch) => {
@@ -28,16 +29,8 @@ export function getRepoContent() {
 				}
 			}
 			else {
-				//dispatch(errorPopup.displayErrorMessage(response.error.message));
-				switch(response.error){
-				case 302: {
-					history.push("/login");
-					break;
-				}
-				default: {
-					dispatch(apiCall.reloadAPICall("getRepoContentByFolder", 5));
-				}   
-				}
+				if (checkIfUnauthorized(response, dispatch)) return;		
+				dispatch(apiCall.reloadAPICall("getRepoContentByFolder", 5));
 			}
 		});
 	};
@@ -85,7 +78,7 @@ export function createFolderinRepo(folderName, onSuccess = () => {}, onFailure =
 				onSuccess();
 			}
 			else {
-				//dispatch(errorPopup.displayErrorMessage(response.error.message));
+				if (checkIfUnauthorized(response, dispatch)) return;				
 				onFailure();
 				dispatch(apiCall.reloadAPICall("createFolderinRepo", 5));
 			}
@@ -108,6 +101,7 @@ export function deleteFileInRepo(fileId, delChoice, onSuccess = () => { }, onFai
 				onSuccess();
 			}
 			else {
+				if (checkIfUnauthorized(response, dispatch)) return;				
 				dispatch(ErrorPopup.displayErrorMessage(response.error.message));
 				onFailure();
 			}

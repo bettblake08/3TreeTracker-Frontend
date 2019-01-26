@@ -6,6 +6,7 @@ import { hot } from "react-hot-loader";
 
 import MainPlatform from "./main/index";
 import AdminPlatform from "./admin/index";
+import LoginPage from "./admin/loginPage";
 import NotFoundPage from "./notFoundPage";
 import setSVGIcons from "../abstract/icons";
 
@@ -23,6 +24,7 @@ class App extends React.Component {
 			<div>
 				<Switch>
 					<Route exact path="/" component={MainPlatform} />
+					<Route exact path={"/admin/login"} component={LoginPage} />
 					<Route path="/admin" component={AdminPlatform}/>
 					<Route component={NotFoundPage} />
 				</Switch>

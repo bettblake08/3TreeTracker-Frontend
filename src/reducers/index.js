@@ -6,6 +6,7 @@ import placementReducer from "./placementReducer";
 import loginAuthReducer from "./loginAuthReducer";
 import errorPopupReducer from "./errorPopupReducer";
 import repoReducer from "./repoReducer";
+import longrichAccountsReducer from "./longrichAccountsReducer";
 
 export default combineReducers({
 	productReducer,
@@ -13,5 +14,6 @@ export default combineReducers({
 	placementReducer,
 	loginAuthReducer,
 	errorPopupReducer,
-	repoReducer
+	repoReducer,
+	longrichAccountsReducer
 });

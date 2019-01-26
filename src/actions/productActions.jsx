@@ -2,6 +2,7 @@ import * as types from "./actionTypes";
 import ProductAPI from "../api/productAPI";
 import * as errorPopup from "./errorPopupActions";
 import * as apiCall from "./apiCallActions";
+import {checkIfUnauthorized} from "./helpers";
 
 export function getProductsSuccess(data){
 	return (dispatch) => {
@@ -48,6 +49,7 @@ export function getProductAsAdmin(productId, onSuccess = () => {}) {
 				onSuccess(response);
 			}
 			else {
+				checkIfUnauthorized(response, dispatch);
 				dispatch(apiCall.reloadAPICall("getProductAsAdmin", 5));
 			}
 		});
@@ -62,6 +64,7 @@ export function getProductsAsAdmin(reset = false, offset = 0, onSuccess = () => 
 				dispatch(getProductsSuccess(response));
 			}
 			else {
+				checkIfUnauthorized(response, dispatch);
 				dispatch(apiCall.reloadAPICall("getProductsAsAdmin", 5));
 			}
 		});
@@ -75,6 +78,7 @@ export function postProduct(product, onSuccess = () => { }) {
 				onSuccess(response);
 			}
 			else {
+				checkIfUnauthorized(response, dispatch);
 				dispatch(errorPopup.displayErrorMessage(response.error.message));
 			}
 		});
@@ -88,6 +92,7 @@ export function updateProduct(product, onSuccess = () => { }) {
 				onSuccess(response);
 			}
 			else {
+				checkIfUnauthorized(response, dispatch);
 				dispatch(errorPopup.displayErrorMessage(response.error.message));
 			}
 		});

@@ -1,5 +1,5 @@
 import * as types from "../actions/actionTypes";
-import objectAssign from 'object-assign';
+import objectAssign from "object-assign";
 
 export default (state = [], action) => {
 	let apiCall = objectAssign({}, state.apiCall);
@@ -14,14 +14,12 @@ export default (state = [], action) => {
 		}
         
 		apiCall[action.request].attempts += 1;
-		return state;
+		return {...state, apiCall};
 	}
 	case types.RESET_API_COUNT: {
-		if(apiCall != undefined || apiCall[action.request] != undefined){
-			apiCall[action.request].attempts = 0;
-		}
-
-		return state;
+		if(apiCall[action.request] === undefined)	return state;
+		apiCall[action.request].attempts = 0;
+		return {...state, apiCall};
 	}
 	default: {
 		return state;

@@ -1,41 +1,30 @@
-import axios from "axios";
 import React, { Component } from "react";
-import { getCountries, getCountry } from "../../abstract/country";
-import { API_URL } from "../../abstract/variables";
-import PlacementInput from "../placementInput";
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+import PropTypes from "prop-types";
+
+import { getCountries } from "../../abstract/country";
 import Button from "../UI/button";
-import ErrorPopup from "../UI/errorPopup";
-import IconButton from "../UI/iconButton";
 import Popup from "../UI/popup";
 import TextInput from "../UI/textInput";
 import DropdownInput from "../UI/dropdownInput";
+import EditAccountPopup from "./accountsPage/editAccountPopup";
+import Account from "./accountsPage/account";
+
+import * as LongrichAccountsActions from "../../actions/longrichAccountActions";
+
+import "../../styles/scss/pages/admin/accounts.scss";
 
 class AccountsView extends Component {
 	constructor(props) {
 		super(props);
 
-		var Viewable = {
-			account:true,
-			event: true,
-			notice: true
-		};
-
 		this.state = {
-			viewable:Viewable,
-			content:[],
-			offset:0,
 			filterSearch:{
 				name:"0",
 				country:"0",
 			},
-			accountInFocus:{},
-			viewType: {
-				account: 1,
-				event: 1,
-				notice: 1
-			},
 			popups:[],
-			errorPopup:{},
 			buttons:[],
 			textInputs:[],
 			dropdownInputs:[],
@@ -49,50 +38,24 @@ class AccountsView extends Component {
 	}
 
 	componentDidMount(){
-		var state = this.state;
-		state.loaded = true;
-		this.setState(state);
-
+		this.setState({laoded: true});
 		this.getAccounts();
 	}
 
 	getAccounts(reset = false) {
 		var c = this;
 		var state = c.state;
+		const {longrichAccounts} = this.props;
 
 		if(reset){
 			state.offset = 0;
 			state.content = [];
 		}
-
-		axios({
-			url: API_URL + "admin/getAccounts/" + state.filterSearch.name + "/" + state.filterSearch.country + "/" + state.offset,
-			method:"GET"
-		}).then((response) => {
-        
-			if(response.status == 200){
-				var data = response.data;
-
-				if (data.content.length == 0) {
-					state.errorPopup.displayError("There are no more accounts to retrieve. Continue creating more.");
-					return;
-				}
-
-				state.content = state.content.concat(data.content);
-				state.offset += data.content.length;
-				c.setState(state);
-			}
-
-		}).catch((response) => {
-
-			if(response.status != 200){
-				setTimeout(() => {
-					c.getAccounts();
-				}, 1000);
-			}
-
-		});
-
+		
+		this.props.actions.longrichAccount.getLongrichAccountsAsAdmin(
+			state.filterSearch,
+			longrichAccounts.offset
+		);
 	}
 
 	toggleEditAccountPopup() {
@@ -100,7 +63,7 @@ class AccountsView extends Component {
 	}
 
 	loadEditAccountPopup() {
-		if (this.state.loaded == true) {
+		if (this.state.loaded) {
 			return (<Popup component={<EditAccountPopup parent={this} />} parent={this} />);
 		}
 	}
@@ -117,10 +80,9 @@ class AccountsView extends Component {
 		});
 
 		return (
-			<div id="section_1" className="SB">
+			<div className="admin section__1 SB" >
 
-				<div id="content">
-					<ErrorPopup parent={this} />
+				<div className="admin content">
 					{this.loadEditAccountPopup()}
 
 					<div className="topBar">
@@ -177,7 +139,7 @@ class AccountsView extends Component {
 
 					<div className="content__view">
 						{
-							this.state.content.map((item, i) => {
+							this.props.longrichAccounts.accounts.map((item, i) => {
 								return <Account account={item.account} key={i} parent={this} />;
 							})
 						}
@@ -202,186 +164,23 @@ class AccountsView extends Component {
 	}
 }
 
+AccountsView.propTypes = {
+	longrichAccounts: PropTypes.object.isRequired,
+	actions: PropTypes.object.isRequired
+};
 
-class Account extends Component {
-	constructor(props) {
-		super(props);
-
-		this.state = {
-			ajax: {
-				setAppStatus: {
-					attempts: 0,
-					error: ""
-				}
-			},
-			iconButtons:[],
-			toggleButtons: this.props.account.status != null ? true : false
-		};
-
-		this.getGender = this.getGender.bind(this);
-	}
-
-	getGender() {
-		return this.props.account.gender == 0 ? "M" : "F";
-	}
-
-	render() {
-		var account = this.props.account;
-		if (account == undefined) { return <div></div>; }
-
-		var parent = this.props.parent;
-		var placement = account.placementId == 0 ? "None" : account.placement.name + " " + account.placement.surname;
-
-		return (
-			<div className="account">
-				<div className="account__title f_normal ">{account.name + " " + account.surname}</div>
-				<div className="account__gender f_normal f_text-center">{this.getGender()}</div>
-				<div className="account__nation f_normal f_text-center">{account.nationality}</div>
-				<div className="account__email f_normal f_text-center">{account.email}</div>
-				<div className="account__phoneNo f_normal f_text-center">{account.phoneNo}</div>
-				<div className="account__code f_normal f_text-center">{account.code}</div>
-				<div className="account__placement f_normal f_text-center">{placement}</div>
-				<div className={account.verified ? "account__verified--t f_normal f_text-center" : "account__verified--f f_normal f_text-center"}>{account.verified ? "True" : "False"}</div>
-
-				<div className="account__buttons">
-
-					<div className="account__buttons__button">
-						<IconButton 
-							parent={this} 
-							status={0} 
-							config={{
-								action: ()=>{
-									parent.toggleEditAccountPopup();
-									parent.state.accountInFocus = account;
-									parent.state.editAccountPopup.state != undefined ? parent.state.editAccountPopup.setInput() : null;
-								},
-								class: "iconBtn",
-								icon:"edit"
-							}} />
-                        
-					</div>
-
-				</div>
-			</div>
-		);
-	}
+function mapStateToProps(state){
+	return {
+		longrichAccounts: state.longrichAccountsReducer
+	};
 }
 
-
-class EditAccountPopup extends Component {
-	constructor(props) {
-		super(props);
-
-		this.state = {
-			placements:[],
-			buttons:[]
-		};
-
-		this.confirm = this.confirm.bind(this);
-		this.setInput = this.setInput.bind(this);
-	}
-
-	componentDidMount(){
-		var state = this.props.parent.state;
-		state.editAccountPopup = this;
-		this.props.parent.setState(state);
-
-		this.setInput();
-	}
-
-	setInput(){
-		var account = this.props.parent.state.accountInFocus;
-		var state = this.state;
-		account.placement == undefined ? null : state.placements.push(account.placement);
-		this.setState(state);
-	}
-
-	confirm() {
-		var c = this;
-		var state = c.state;
-
-		axios({
-			url: API_URL + "admin/longrichAccount/" + state.offset,
-			method: "PUT",
-			data:{
-				placementId:state.placements[0].id
-			}
-		}).then((response) => {
-
-			if(response.status == 200){
-				c.props.parent.toggleEditAccountPopup();
-			}
-
-		}).catch((response) => {
-
-			switch (response.status) {
-			case 404: {
-				state.errorPopup.displayError("There is no such user with this id. Please use vaild id.");
-				break;
-			}
-			case 500: {
-				state.errorPopup.displayError("Failed to save changes. Please try again later.");
-				break;
-			}
-			default: state.errorPopup.displayError("Failed to access server. Please try again later.");break;
-			}
-
-		});  
-	}
-
-	render() {
-		console.log(this.state);
-
-		return (
-			<div className="editPP">
-				<div className="editPP__content">
-					<form method="post" encType="multipart/form-data">
-
-						<div className="reg__form" >
-
-							<h1 className="f_h1">Edit Account Information</h1>
-
-							<div className="reg__placement">
-								<div className="reg__placement__label f_h1">Placement</div>
-								<div className="reg__placement__input" >
-									<PlacementInput main={this.props.parent} parent={this} limit={1} />
-								</div>
-								<div className="reg__placement__comment f_comment_1">Select a longrich agent to register under.</div>
-							</div>
-
-						</div>
-					</form>
-				</div>
-
-				<div className="editPP__buttons">
-					<div className="editPP__buttons__button">
-						<Button
-							parent={this}
-							status={5}
-							config={{
-								type: "btn_1",
-								label: "Cancel",
-								text: "",
-								action: this.props.parent.toggleEditAccountPopup
-							}} />
-					</div>
-
-					<div className="editPP__buttons__button">
-						<Button
-							parent={this}
-							status={6}
-							config={{
-								type: "btn_1",
-								label: "Confirm",
-								text: "",
-								action: this.confirm
-							}} />
-					</div>
-
-				</div>
-			</div>
-		);
-	}
+function mapDispatchToProps(dispatch) {
+	return {
+		actions: {
+			longrichAccount: bindActionCreators(LongrichAccountsActions, dispatch)
+		}
+	};
 }
 
-export default AccountsView;
+export default connect(mapStateToProps, mapDispatchToProps)(AccountsView);

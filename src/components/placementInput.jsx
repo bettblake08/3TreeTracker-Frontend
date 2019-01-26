@@ -22,7 +22,7 @@ class PlacementInput extends Component {
 	}
 
 	toggleInput(){
-		this.setState({ name: "", activeInput: this.state.activeInput == true ? false : true});
+		this.setState({ name: "", activeInput: !this.state.activeInput});
 		this.props.actions.placement.resetPlacementSuggestions();
 	}
 
@@ -58,7 +58,7 @@ class PlacementInput extends Component {
 		return (
 			<div className="tagInput">
 				{this.setSelectedPlacement()}
-				<div className={`tagInput__input--${this.state.activeInput == true ? "active": "disabled"}`}>
+				<div className={`tagInput__input--${this.state.activeInput ? "active": "disabled"}`}>
 					<div className="tagInput__input__name">
 						<input 
 							type="text"
@@ -70,19 +70,10 @@ class PlacementInput extends Component {
 
 					<div className="tagInput__input__buttons">
 
-						<div className="tagInput__input__add">
+						<div className={`tagInput__input__${this.state.activeInput ? "cancel": "add"}`}>
 							<div className="iconBtn--normal" onClick={() => { this.toggleInput(); }}>
 								<svg className="icon">
-									<use xlinkHref="#add" />
-								</svg>
-							</div>
-						</div>
-                        
-                       
-						<div className="tagInput__input__cancel">
-							<div className="iconBtn--normal" onClick={() => { this.toggleInput(); }}>
-								<svg className="icon">
-									<use xlinkHref="#back" />
+									<use xlinkHref={`#${this.state.activeInput ? "back": "add"}`} />
 								</svg>
 							</div>
 						</div>

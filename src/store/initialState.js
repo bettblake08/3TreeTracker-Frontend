@@ -48,5 +48,10 @@ export default {
 			createFolderDisplay: false,
 			uploadFileDisplay: false
 		}
+	},
+	longrichAccountsReducer:{
+		accounts: [],
+		offset: 0,
+		accountInFocus: {}
 	}
 };

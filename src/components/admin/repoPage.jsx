@@ -3,6 +3,8 @@ import Repo from "../common/repo";
 
 export default function repoPage() {
 	return (
-		<Repo selectionType={0}/>
+		<div className="admin section__1">
+			<Repo selectionType={0} />
+		</div>
 	);
 }

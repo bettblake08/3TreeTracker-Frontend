@@ -1,6 +1,7 @@
 import * as types from "./actionTypes";
 import AdminAccountAuthAPI from "../api/adminAccountAuthAPI";
 import {history} from "../store/configureStore";
+import {checkIfUnauthorized} from "./helpers";
 
 export function adminLoginSuccess(data){
 	return {type: types.ADMIN_LOGIN_SUCCESS, data};
@@ -30,10 +31,11 @@ export function adminLogout(onSuccess = () => { }, onFailure = () => { }) {
 		return AdminAccountAuthAPI.logout().then((response) => {
 			if (response.error == undefined) {
 				onSuccess();
-				dispatch(adminLogoutSuccess(response));
+				dispatch(adminLogoutSuccess());
 				history.replace("login");
 			}
 			else {
+				if (checkIfUnauthorized(response, dispatch)) return;				
 				onFailure(response);
 			}
 		});

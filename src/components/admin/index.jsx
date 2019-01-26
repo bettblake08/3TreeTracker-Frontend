@@ -4,7 +4,6 @@ import {connect} from "react-redux";
 import PropTypes from "prop-types";
 
 import AdminHeader from "../header/adminHeader";
-import LoginPage from "./loginPage";
 import ProductsPage from "./productsPage";
 import AccountsPage from "./accountsPage";
 import RepoPage from "./repoPage";
@@ -37,7 +36,6 @@ class AdminPlatform extends Component {
 					<SideBar />
 					
 					<Switch>
-						<Route path={`${path}/login`} component={LoginPage} />
 						<Route path={`${path}/products`} render={() => this.checkIfLoggedIn(ProductsPage)} />
 						<Route path={`${path}/accounts`} render={() => this.checkIfLoggedIn(AccountsPage)} />
 						<Route path={`${path}/repo`} render={() => this.checkIfLoggedIn(RepoPage)} />
