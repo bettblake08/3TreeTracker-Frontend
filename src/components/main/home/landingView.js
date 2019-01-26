@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Slider from "react-slick";
+import PropTypes from "prop-types";
 import {LANDING_PAGE_BACKGROUND} from "../../../abstract/variables";
 import Button from "../../UI/button";
 
@@ -63,5 +64,9 @@ class LandingView extends Component {
 		);
 	}
 }
+
+LandingView.propTypes = {
+	parent: PropTypes.object.isRequired
+};
 
 export default LandingView;

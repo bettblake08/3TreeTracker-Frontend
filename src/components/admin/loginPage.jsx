@@ -8,7 +8,7 @@ import Button from "../UI/button";
 import TextInput from "../UI/textInput";
 import {PasswordInput} from "../UI/newPasswordInput";
 
-import "../../styles/scss/pages/admin/login.scss";
+import "../../assets/styles/scss/pages/admin/login.scss";
 
 class LoginPage extends Component {
 	constructor(props) {

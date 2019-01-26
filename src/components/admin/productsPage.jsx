@@ -5,7 +5,9 @@ import ProductsView from "./productsPage/productsView";
 import AddProduct from "./productsPage/addProduct";
 import EditProduct from "./productsPage/editProduct";
 
-import "../../styles/scss/pages/admin/products.scss";
+import "../../assets/styles/scss/pages/admin/products.scss";
+
+
 class Products extends Component {
 	constructor(props) {
 		super(props);

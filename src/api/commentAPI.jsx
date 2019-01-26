@@ -1,12 +1,10 @@
 import axios from "axios";
 import { API_URL } from "../abstract/variables";
 import { MOCK } from "./config";
-import CommentAPIMock from "./mock/commentAPI";
 import * as errorPopupActions from "../actions/errorPopupActions";
 
 class ProductAPI {
 	static postComment(comment, onComplete = () => { }, onFailure = () => {}) {
-		if (MOCK) return CommentAPIMock.reactToComment();
 		var url = `${API_URL}comment/${comment.postType}`;
 
 		switch (comment.postType) {

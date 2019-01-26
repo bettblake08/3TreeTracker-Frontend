@@ -5,7 +5,7 @@ import ProductView from "./home/productView";
 import InfoView from "./home/infoView";
 import AccountView from "./home/accountView";
 
-import "../../styles/scss/pages/main/home.scss";
+import "../../assets/styles/scss/pages/main/home.scss";
 
 class HomePage extends Component {
 	constructor(props){

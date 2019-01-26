@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import moment from "moment";
 import PropTypes from "prop-types";
-import {DEFAULT_USER_PIC} from "../../abstract/variables";
+import {DEFAULT_USER_PIC} from "../../../abstract/variables";
 import IconButton from "../../UI/iconButton";
 import CommentAPI from "../../../api/commentAPI";
 

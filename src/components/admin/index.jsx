@@ -9,7 +9,7 @@ import AccountsPage from "./accountsPage";
 import RepoPage from "./repoPage";
 import SideBar from "../admin/sidebar";
 
-import "../../styles/scss/admin.scss";
+import "../../assets/styles/scss/admin.scss";
 
 class AdminPlatform extends Component {
 	constructor(props) {

@@ -4,7 +4,7 @@ import { Route, Switch } from "react-router-dom";
 import MainHeader from "../header/mainHeader";
 import HomePage from "./homePage";
 
-import "../../styles/scss/main.scss";
+import "../../assets/styles/scss/main.scss";
 
 class MainPlatform extends Component {
 	render() {

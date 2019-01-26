@@ -1,5 +1,10 @@
 import React, { Component } from "react";
 import axios from "axios";
+import PropTypes from "prop-types";
+
+import CommentInput from "./commentInput";
+import NoCommentPlaceholder from "./noCommentPlaceholder";
+import Comment from "./comment";
 import { API_URL } from "../../../abstract/variables";
 import ErrorPopup from "../../UI/errorPopup";
 
@@ -162,5 +167,12 @@ class CommentingSystem extends Component {
 		);
 	}
 }
+
+CommentingSystem.propTypes = {
+	parent: PropTypes.object.isRequired,
+	commentingOn: PropTypes.number,
+	product: PropTypes.object,
+	preview: PropTypes.bool
+};
 
 export default CommentingSystem;

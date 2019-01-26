@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { API_URL, DEFAULT_USER_PIC } from "../../abstract/variables";
+
+import { API_URL, DEFAULT_USER_PIC } from "../../../abstract/variables";
 import MultiLineTextInput from "../../UI/MultiLineTextInput";
 import TextInput from "../../UI/textInput";
 import Button from "../../UI/button";

@@ -13,7 +13,7 @@ import Account from "./accountsPage/account";
 
 import * as LongrichAccountsActions from "../../actions/longrichAccountActions";
 
-import "../../styles/scss/pages/admin/accounts.scss";
+import "../../assets/styles/scss/pages/admin/accounts.scss";
 
 class AccountsView extends Component {
 	constructor(props) {
