@@ -28,7 +28,7 @@ class Products extends Component {
 
 	render() {
 		return (
-			<div className="admin section__1 SB productsPage">
+			<div className="admin section__1 SB adminProductsPage">
 				<ErrorPopup />
 
 				<div className={`view--${this.state.view == 1 ? "active": "disabled"}`}>

@@ -70,7 +70,7 @@
         }
 
         &__logo {
-            width: 8rem;
+            width: 4rem;
             height: 4rem;
             float: left;
             position: absolute;
@@ -84,19 +84,19 @@
 
             @include respond(tab-land) {
                 height: 4rem;
-                width: 8rem;
+                width: 4rem;
             }
 
             @include respond(phone) {
                 height: 3rem;
-                width: 6rem;
+                width: 3rem;
             }
         }
 
         &__title {
             float: left;
             color: $color-edulink-primary;
-            margin-left: 10rem;
+            margin-left: 5rem;
             line-height: 5vh;
         }
 

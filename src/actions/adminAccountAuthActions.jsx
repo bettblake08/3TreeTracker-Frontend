@@ -13,7 +13,7 @@ export function adminLogin(loginDetails, onSuccess = () => {}, onFailure = () =>
 			if (response.error == undefined) {
 				onSuccess();
 				dispatch(adminLoginSuccess(response));
-				history.replace("products");
+				//history.push("products");
 			}
 			else {
 				onFailure(response);
@@ -29,7 +29,7 @@ export function adminLogoutSuccess(data) {
 export function adminLogout(onSuccess = () => { }, onFailure = () => { }) {
 	return (dispatch) => {
 		return AdminAccountAuthAPI.logout().then((response) => {
-			if (response.error == undefined) {
+			if (response.success) {
 				onSuccess();
 				dispatch(adminLogoutSuccess());
 				history.replace("login");

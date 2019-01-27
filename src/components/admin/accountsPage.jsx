@@ -80,7 +80,7 @@ class AccountsView extends Component {
 		});
 
 		return (
-			<div className="admin section__1 SB" >
+			<div className="admin section__1 SB adminAccountsPage" >
 
 				<div className="admin content">
 					{this.loadEditAccountPopup()}

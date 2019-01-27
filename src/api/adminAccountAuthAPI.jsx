@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "./config";
 import AdminAccountAuthAPIMock from "./mock/adminAccountAuthAPI";
 import { MOCK } from "./config";
 import { API_URL } from "../abstract/variables";
@@ -8,21 +8,16 @@ class AdminAccountAuthAPI {
 		if (MOCK) return AdminAccountAuthAPIMock.login();
 
 		return new Promise((resolve) => {
-			axios({
-				url: `${API_URL}admin/login`,
-				method: "POST",
-				data: {
-					username: loginDetails.username,
-					password: loginDetails.password
-				}
+			axios.post(`${API_URL}admin/login`, {
+				username: loginDetails.username,
+				password: loginDetails.password
 			}).then((response) => {
-				var data = response.data;
 
-				switch (data.error) {
+				switch (response.status) {
 				case 200: {
 					resolve({
 						success:true,
-						user: data.user,
+						user: response.data.user,
 						userType: "admin"
 					});
 					break;
@@ -30,8 +25,9 @@ class AdminAccountAuthAPI {
 				}
 
 			}).catch((response) => {
-				if (response.status != 200) {
+				if (response.response.status != 200) {
 					resolve({
+						success: false,
 						error:{
 							status:response.response.status,
 						}
