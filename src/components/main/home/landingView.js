@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
 import Slider from "react-slick";
 import PropTypes from "prop-types";

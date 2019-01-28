@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import {getLoggedInUser} from "../helper/auth";
 import {WEB_URL} from "../abstract/variables";
 

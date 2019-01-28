@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable import/no-named-as-default */
 import { Route, Switch } from "react-router-dom";
 import PropTypes from "prop-types";

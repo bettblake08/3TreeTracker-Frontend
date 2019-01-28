@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
 import {LADDER} from "../../../abstract/variables";
 import PropTypes from "prop-types";

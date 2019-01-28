@@ -13,13 +13,13 @@
     "start": "concurrently -k -r -s first \"npm run test:watch\" \"npm run open:src\" \"npm run lint:watch\"",
     "open:src": "babel-node tools/srcServer.js",
     "open:dist": "babel-node tools/distServer.js",
-    "lint": "esw webpack.config.* src tools --color; exit 0",
-    "lint:watch": "npm run lint -- --watch; exit 0",
+    "open:dist:prod": "babel-node tools/productionBuildServer.js",
+    "lint": "esw webpack.config.* src tools --color",
+    "lint:watch": "npm run lint -- --watch",
     "clean-dist": "npm run remove-dist && mkdir dist",
     "remove-dist": "rimraf ./dist",
     "prebuild": "npm run lint && npm run test && npm run clean-dist",
-    "build": "babel-node tools/build.js && npm run open:dist",
-    "build:heroku": "babel-node tools/build.js && npm run open:dist",
+    "build": "babel-node tools/build.js",
     "test": "jest",
     "test:CI": "jest",
     "test:cover": "npm run test -- --coverage ",
@@ -27,7 +27,8 @@
     "test:watch": "jest --watchAll",
     "open:cover": "npm run test:cover && opn ./coverage/lcov-report/index.html",
     "analyze-bundle": "babel-node ./tools/analyzeBundle.js",
-    "heroku-postbuild": "npm run build"
+    "heroku-prebuild": "",
+    "heroku-postbuild": "babel-node tools/build.js"
   },
   "author": "Brian K. Bett",
   "license": "MIT",
@@ -37,6 +38,9 @@
     "@nlib/human-readable": "^1.0.1",
     "axios": "^0.18.0",
     "connected-react-router": "^4.4.1",
+    "eslint-import-resolver-webpack": "^0.11.0",
+    "express": "^4.16.4",
+    "http-proxy-middleware": "^0.19.1",
     "jspdf": "^1.4.1",
     "moment": "^2.23.0",
     "object-assign": "4.1.1",
@@ -164,34 +168,5 @@
         ]
       }
     }
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "eslint:recommended",
-      "plugin:import/errors",
-      "plugin:import/warnings",
-      "plugin:react/recommended"
-    ],
-    "plugins": [
-      "react"
-    ],
-    "parser": "babel-eslint",
-    "parserOptions": {
-      "ecmaVersion": 6,
-      "sourceType": "module",
-      "ecmaFeatures": {
-        "jsx": true,
-        "experimentalObjectRestSpread": true
-      }
-    },
-    "env": {
-      "es6": true,
-      "browser": true,
-      "node": true,
-      "jquery": true,
-      "jest": true
-    },
-    "globals": {}
   }
 }

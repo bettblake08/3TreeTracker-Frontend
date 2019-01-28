@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
 import ErrorPopup from "../UI/errorPopup";
 import LandingView from "./home/landingView";
