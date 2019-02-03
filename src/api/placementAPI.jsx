@@ -1,41 +1,40 @@
-import axios from "axios";
-import { API_URL } from "../abstract/variables";
-import { MOCK } from "./config";
+import axios, { MOCK } from "./config";
 import PlacementAPIMock from "./mock/placementAPI";
 
 class PlacementAPI{
 	static getPlacements(placementName){
 		if(MOCK) return PlacementAPIMock.getPlacements();
 
-		return new Promise((resolve)=>{
-			axios({
-				url: `${API_URL}getPlacements/${placementName.toLowerCase()}`,
-				method: "GET"
-			}).then((response) => {
+		return axios(`getPlacements/${placementName.toLowerCase()}`)
+		.then((response) => {
+			if(response.status === 200){
+				return ({
+					success: true,
+					suggestions: response.data.content
+				});
+			}
+		}).catch((response) => {
 
-				var data = response.data;
-				switch (response.status) {
-				case 200: {
-					resolve({
-						suggestions: data.content
-					});
-					break;
-				}
-				}
-			}).catch((response) => {
-
-				switch (response.status) {
+			switch (response.response.status) {
 				case 404: {
-					resolve({
+					return ({
+						success: false,
 						error: {
-							status: response.status,
+							status: response.response.status,
+							message: "No placement suggestions found!"
+						}
+					});
+				}
+				default : {
+					return ({
+						success: false,
+						error: {
+							status: response.response.status,
 							message: "Error accessing server. Please try again later."
 						}
 					});
-					break;
 				}
-				}
-			});
+			}
 		});
 	}
     

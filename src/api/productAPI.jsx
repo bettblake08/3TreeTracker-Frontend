@@ -1,5 +1,4 @@
 import axios from "axios";
-import { API_URL } from "../abstract/variables";
 import { MOCK } from "./config";
 import ProductAPIMock from "./mock/productAPI";
 
@@ -11,179 +10,124 @@ class ProductAPI{
 			offset = 0;
 		}
 
-		return new Promise((resolve)=>{
-			axios({
-				url: `${API_URL}${admin ? "admin/" : ""}getProducts/${offset}`,
-				method: "GET"
-			}).then((response) => {
-				var data = response.data;
+		return axios(`${admin ? "admin/" : ""}getProducts/${offset}`)
+		.then((response) => {
+			var data = response.data;
 
-				switch (response.status) {
+			switch (response.status) {
 				case 200: {
 					var content = data.content;
 					offset += data.content.length;
 
-					resolve({ content, offset });
+					return { success: true, content, offset };
 				}
-				}
-			}).catch((response) => {
-				var responseStatus = response.status;
+			}
+		}).catch((response) => {
+			var responseStatus = response.status;
 
-				switch (responseStatus) {
+			switch (responseStatus) {
 				case 404: {
-					resolve({
-						error:{
+					return {
+						success: false,
+						error: {
 							status: responseStatus,
 							message: "There are no more products to retrieve."
 						}
-					});
-					break;
+					};
 				}
-				}
-			});
+			}
 		});
 	}
     
-	static getProduct(productId) {
+	static getProduct(productId, admin = false) {
 		if (MOCK) return ProductAPIMock.getProduct(productId);
 
-		return new Promise((resolve) => {
-			axios({
-				url: `${API_URL}getProduct/${productId}`,
-				method: "GET"
-			}).then((response) => {
+		return axios(`${admin ? "getProduct": "admin/product" }/${productId}`)
+		.then((response) => {
 
-				if (response.status == 200) {
-					var data = response.data;
-                    
-					resolve({
-						product: data.content,
-						likes: data.content.likes == undefined ? 0 : data.content.likes.length
-					});
+			if (response.status === 200) {
+				var data = response.data;
 
-					/* if (state.commentingSystem.state != undefined) {
-						state.commentingSystem.getComments();
+				return {
+					success: true,
+					product: data.content,
+					likes: data.content.likes == undefined ? 0 : data.content.likes.length
+				};
+			}
+
+		}).catch((response) => {
+			if (response.status !== 200) {
+				return {
+					success: false,
+					error: {
+						status: response.response.status
 					}
-
-					setTimeout(() => {
-						component.setCoverPhoto();
-					}, 1000); */
-				}
-
-			}).catch((response) => {
-				if (response.status != 200) {
-					resolve({
-						error:{
-							status: response.response.status
-						}
-					});
-				}
-			});
+				};
+			}
 		});
 	}
 
-	static getProductAsAdmin(productId) {
-		if (MOCK) return ProductAPIMock.getProductAsAdmin(productId);
-
-		return new Promise((resolve) => {
-			axios({
-				url: `${API_URL}admin/product/${productId}`,
-				method: "GET"
-			}).then((response) => {
-
-				if (response.status == 200) {
-					var data = response.data;
-					resolve({
-						product: data.content
-					});
-				}
-
-			}).catch((response) => {
-				if (response.status != 200) {
-					resolve({
-						error: {
-							status: response.status
-						}
-					});
-				}
-			});
-		});
-	}
 	static postProduct(product) {
 		if (MOCK) return ProductAPIMock.postProduct(product);
 
-		return new Promise((resolve) => {
-			axios({
-				url: `${API_URL}admin/product/0`,
-				method: "POST",
-				data: product
-			}).then((response) => {
-				if (response.status === 201) {
-					resolve({ success: true, product });
-				}
+		return axios({
+			url: `admin/product/0`,
+			method: "POST",
+			data: product
+		}).then((response) => {
+			if (response.status === 201) {
+				return { success: true, product };
+			}
 
-			}).catch((response) => {
-				switch (response.status) {
+		}).catch((response) => {
+			switch (response.status) {
 				default: {
-					resolve({
+					return {
 						error: {
 							status: response.status,
 							message: "Failed to access server. Please try again in a few minutes."
 						}
-					});
-					break;
+					};
 				}
-				}
-			});
+			}
 		});
 	}
 
 	static updateProduct(product){
 		if (MOCK) return ProductAPIMock.updateProduct(product);
 
-		return new Promise((resolve) => {
-			axios({
-				url: `${API_URL}admin/product/${product.pro__id}`,
-				method: "PUT",
-				data: product
-			}).then((response) => {
+		return axios({
+			url: `admin/product/${product.pro__id}`,
+			method: "PUT",
+			data: product
+		}).then((response) => {
 
-				if (response.status === 200) {
-					resolve({success: true, product});
+			if (response.status === 200) {
+				return { success: true, product };
+			}
+
+		}).catch((response) => {
+			let res = {
+				success: false,
+				error: {
+					status: response.status
 				}
+			};
 
-			}).catch((response) => {
-				switch (response.status) {
+			switch (response.status) {
 				case 404: {
-					resolve({
-						error: {
-							status: response.status,
-							message: "Product does not exist! If you have an concerns, contact developer!"
-						}
-					});
-					break;
+					res.error.message = "Product does not exist! If you have an concerns, contact developer!";
+					return res;
 				}
 				case 500: {
-					resolve({
-						error: {
-							status: response.status,
-							message: "Failed to save the product. Please try again!"
-						}
-					});
-					break;
+					res.error.message = "Failed to save the product. Please try again!";
+					return res;
 				}
 				default: {
-					resolve({
-						error: {
-							status: response.status,
-							message: "Failed to access server. Please try again in a few minutes."
-						}
-					});
-					break;
+					res.error.message = "Failed to access server. Please try again in a few minutes.";
+					return res;
 				}
-				}
-
-			});
+			}
 
 		});
 	}

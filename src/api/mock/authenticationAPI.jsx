@@ -1,4 +1,4 @@
-import DELAY from "./delay";
+import { MOCK_DELAY as DELAY } from "../config";
 
 let responseStatus = 200;
 let user = {
@@ -8,7 +8,7 @@ let user = {
 };
 
 
-class AdminAccountAuthAPI {
+class AuthenticationAPI {
 	static login(){
 		return new Promise((resolve) => {
 			setTimeout(() => {
@@ -52,4 +52,4 @@ class AdminAccountAuthAPI {
 	}
 }
 
-export default AdminAccountAuthAPI;
+export default AuthenticationAPI;

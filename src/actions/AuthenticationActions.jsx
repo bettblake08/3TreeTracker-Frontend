@@ -1,5 +1,5 @@
 import * as types from "./actionTypes";
-import AdminAccountAuthAPI from "../api/adminAccountAuthAPI";
+import AuthenticationAPI from "../api/authenticationAPI";
 import {history} from "../store/configureStore";
 import {checkIfUnauthorized} from "./helpers";
 
@@ -9,11 +9,13 @@ export function adminLoginSuccess(data){
 
 export function adminLogin(loginDetails, onSuccess = () => {}, onFailure = () => {}) {
 	return (dispatch) => {
-		return AdminAccountAuthAPI.login(loginDetails).then((response) => {
-			if (response.error == undefined) {
+		return AuthenticationAPI
+			.login(loginDetails)
+			.then((response) => {
+			if (response.success) {
 				onSuccess();
 				dispatch(adminLoginSuccess(response));
-				//history.push("products");
+				history.push("products");
 			}
 			else {
 				onFailure(response);
@@ -28,11 +30,11 @@ export function adminLogoutSuccess(data) {
 
 export function adminLogout(onSuccess = () => { }, onFailure = () => { }) {
 	return (dispatch) => {
-		return AdminAccountAuthAPI.logout().then((response) => {
+		return AuthenticationAPI.logout().then((response) => {
 			if (response.success) {
 				onSuccess();
 				dispatch(adminLogoutSuccess());
-				history.replace("login");
+				history.push("login");
 			}
 			else {
 				if (checkIfUnauthorized(response, dispatch)) return;				

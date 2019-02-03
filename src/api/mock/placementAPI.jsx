@@ -1,4 +1,4 @@
-import DELAY from "./delay";
+import { MOCK_DELAY as DELAY } from "../config";
 
 let responseStatus = 200;
 let placements = [];

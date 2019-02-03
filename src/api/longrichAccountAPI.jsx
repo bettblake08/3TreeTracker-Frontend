@@ -1,16 +1,18 @@
-import axios from "axios";
-import {API_URL} from "../abstract/variables";
-
+import axios, { axiosProtected } from "./config";
 
 class LongrichAccountAPI{
 	static createAccount(newAccount){
 
 		return axios({
-			url: `${API_URL}longrichAccount`,
+			url: `longrichAccount`,
 			method: "POST",
 			data: newAccount
 		}).then((response) => {
-			return ({ success: true, content: response.data.content });
+
+			if(response.status === 201){
+				return ({ success: true, content: response.data.content });
+			}
+
 		}).catch((response) => {
 			
 
@@ -38,12 +40,9 @@ class LongrichAccountAPI{
 	}
 
 	static getAccounts(filter, offset = 0, admin=false){
-		return axios({
-			url: `${API_URL}${admin ? "admin/": "" }getAccounts/${filter.name}/${filter.country}/${offset}`,
-			method: "GET"
-		}).then((response) => {
-
-			if (response.status == 200) {
+		return axiosProtected(`${admin ? "admin/" : ""}getAccounts/${filter.name}/${filter.country}/${offset}`)
+		.then((response) => {
+			if (response.status === 200) {
 				var data = response.data;
 
 				if (data.content.length == 0) {
@@ -77,13 +76,13 @@ class LongrichAccountAPI{
 	}
 
 	static updateAccount(data){
-		return axios({
-			url: `${API_URL}admin/longrichAccount/0`,
+		return axiosProtected({
+			url: `admin/longrichAccount/${data.id}`,
 			method: "PUT",
 			data
 		}).then((response) => {
 
-			if (response.status == 200) {
+			if (response.status === 200) {
 				return {success: true};
 			}
 

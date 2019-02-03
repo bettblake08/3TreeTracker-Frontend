@@ -1,125 +1,106 @@
-import axios from "axios";
-
-import {API_URL} from "../abstract/variables";
-
-// eslint-disable-next-line no-unused-vars
-var urls ={
-	url: {
-		uploadFiletoRepo: `${API_URL}admin/uploadFiletoRepo/`,
-		createFolderinRepo: "",
-		deleteFolderFromRepo: `${API_URL}admin/repoFolder/`
-	},
-};
+import {axiosProtected} from "./config";
 
 class RepoAPI{
 	static getRepoContent(folder_id){
 
-		return new Promise((resolve) => {
-			axios({
-				url: `${API_URL}admin/retrieveRepoContentByFolder/${folder_id}`,
-				method: "GET",
-			}).then((response) => {
-				var data = response.data;
+		return axiosProtected(`admin/retrieveRepoContentByFolder/${folder_id}`)
+		.then((response) => {
+			var data = response.data;
 
-				switch (response.status) {
+			switch (response.status) {
 				case 200: {
-					resolve({content: data.content});
-					break;
+					return ({ success: true, content: data.content });
 				}
 				case 302: {
-					resolve({
+					return {
+						success: false,
 						error: {
 							status: response.status
 						}
-					});
-					break;
+					};
 				}
-				}
-			}).catch((response) => {
-				if (response.status !== 200){
-					resolve({
-						error: {
-							status: response.status
-						}
-					});
-				}
-			});
+			}
+		}).catch((response) => {
+			if (response.response.status !== 200) {
+				return {
+					success: false, 
+					error: {
+						status: response.status
+					}
+				};
+			}
 		});
 	}
     
 	static createFolderinRepo(parentFolder, folderName) {
-		return new Promise((resolve) => {
-			axios({
-				url: `${API_URL}admin/repoFolder/root`,
-				method: "POST",
-				data: {
-					parentId: parentFolder,
-					name: folderName
-				}
-			}).then((response) => {
-				if(response.status === 200){
-					resolve({ success: true });
-				}
-                
-			}).catch((response) => {
-				if (response.status !== 200) {
-					resolve({
-						error: {
-							status: response.status
-						}
-					});
-				}
-			});
+		return axiosProtected({
+			url: `admin/repoFolder/root`,
+			method: "POST",
+			data: {
+				parentId: parentFolder,
+				name: folderName
+			}
+		}).then((response) => {
+			if (response.status === 200) {
+				return { success: true };
+			}
+
+		}).catch((response) => {
+			if (response.response.status !== 200) {
+				return {
+					success: false,
+					error: {
+						status: response.response.status
+					}
+				};
+			}
 		});
 	}
     
 	static uploadFiletoRepo(parentFolder, folderName) {
-		return new Promise((resolve) => {
-			axios({
-				url: `${API_URL}admin/repoFolder/root`,
-				method: "POST",
-				data: {
-					parentId: parentFolder,
-					name: folderName
-				}
-			}).then((response) => {
-				if (response.status === 200) {
-					resolve({ success: true });
-				}
+		return axiosProtected({
+			url: `admin/repoFolder/root`,
+			method: "POST",
+			data: {
+				parentId: parentFolder,
+				name: folderName
+			}
+		}).then((response) => {
+			if (response.status === 200) {
+				return { success: true };
+			}
 
-			}).catch((response) => {
-				if (response.status !== 200) {
-					resolve({
-						error: {
-							status: response.status
-						}
-					});
-				}
-			});
+		}).catch((response) => {
+			if (response.response,status !== 200) {
+				return {
+					success: false,
+					error: {
+						status: response.response.status
+					}
+				};
+			}
 		});
 	}
     
 	static deleteFileFromRepo(fileId, delChoice){
-		return new Promise((resolve)=>{
-			axios({
-				url: `${API_URL}admin/repoFile/${fileId}`,
-				method: delChoice ? "DELETE" : "GET"
-			}).then((response) => {
-				if(response.status == 200){
-					resolve({success: true});
-				}
-			}).catch((response)=>{
-				switch(response.status){
+		return axiosProtected({
+			url: `admin/repoFile/${fileId}`,
+			method: delChoice ? "DELETE" : "GET"
+		}).then((response) => {
+			if (response.status == 200) {
+				return ({ success: true });
+			}
+		}).catch((response) => {
+			switch (response.response.status) {
 				default: {
-					resolve({
+					return {
 						error: {
-							status: response.status,
+							status: response.response.status,
 							message: "Accesss to server failed. Please try again later!"
 						}
-					});
+					};
 				}
-				}
-			});
+			}
 		});
 	}
 }

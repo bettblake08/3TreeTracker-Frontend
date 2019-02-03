@@ -1,7 +1,7 @@
 export const getLoggedInUser = () => {
 	let user = JSON.parse(localStorage.getItem("loggedInUser"));
 
-	if (user == undefined) {
+	if (user === undefined) {
 		return {
 			user: {},
 			userType: ""
