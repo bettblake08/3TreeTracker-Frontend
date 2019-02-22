@@ -3,7 +3,9 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 
-import * as longrichAccountActions from "../../../actions/longrichAccountActions";
+import * as LongrichAccountActions from "../../../actions/longrichAccountActions";
+import * as HelperActions from "../../../actions/helpers";
+
 import Button from "../../UI/button";
 import PlacementInput from "../../placementInput";
 
@@ -23,20 +25,19 @@ class EditAccountPopup extends Component {
 	}
 
 	componentDidMount() {
-		this.props.parent.setState({ editAccountPopup: this});
 		this.setInput();
 	}
     
-	componentDidUpdate(){
-		if(this.props.accountInFocus !== this.props.accountInFocus){
+	componentDidUpdate(prevProps){
+		if(this.props.accountInFocus !== prevProps.accountInFocus){
 			this.setInput();
 		}
 	}
 
 	setInput() {
-		var account = this.props.accountInFocus;
+		var { accountInFocus } = this.props;
 		var state = this.state;
-		account.placement == undefined ? null : state.placements.push(account.placement);
+		if (accountInFocus.placement !== undefined) state.placements.push(accountInFocus.placement);
 		this.setState(state);
 	}
 
@@ -54,16 +55,16 @@ class EditAccountPopup extends Component {
 				<div className="editPP__content">
 					<form method="post" encType="multipart/form-data">
 
-						<div className="reg__form" >
+						<div className="editPP__form" >
 
 							<h1 className="f_h1">Edit Account Information</h1>
 
-							<div className="reg__placement">
-								<div className="reg__placement__label f_h1">Placement</div>
-								<div className="reg__placement__input" >
+							<div className="editPP__placement">
+								<div className="editPP__placement__label f_h1">Placement</div>
+								<div className="editPP__placement__input" >
 									<PlacementInput />
 								</div>
-								<div className="reg__placement__comment f_comment_1">Select a longrich agent to register under.</div>
+								<div className="editPP__placement__comment f_comment_1">Select a longrich agent to register under.</div>
 							</div>
 
 						</div>
@@ -79,7 +80,9 @@ class EditAccountPopup extends Component {
 								type: "btn_1",
 								label: "Cancel",
 								text: "",
-								action: this.props.parent.toggleEditAccountPopup
+								action: ()=>{
+									this.props.actions.helper.toggleContent("editAccountPopup");
+								}
 							}} />
 					</div>
 
@@ -102,21 +105,21 @@ class EditAccountPopup extends Component {
 }
 
 EditAccountPopup.propTypes = {
-	parent: PropTypes.object.isRequired,
 	accountInFocus: PropTypes.object.isRequired,    
 	actions: PropTypes.object.isRequired  
 };
 
 function mapStateToProps(state){
 	return {
-		accountInFocus: state.longrichAccountActions.accountInFocus
+		accountInFocus: state.longrichAccountsReducer.accountInFocus
 	};
 }
 
 function mapDispatchToProps(dispatch){
 	return {
 		actions: {
-			longrichAccount: bindActionCreators(longrichAccountActions, dispatch)
+			longrichAccount: bindActionCreators(LongrichAccountActions, dispatch),
+			helper: bindActionCreators(HelperActions, dispatch),
 		}
 	};
 }

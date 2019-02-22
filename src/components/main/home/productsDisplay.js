@@ -3,9 +3,11 @@ import React, { Component } from "react";
 import {connect} from "react-redux";
 import PropTypes from "prop-types";
 import {bindActionCreators} from "redux";
+import InfiniteScroll from "react-infinite-scroller";
+import Loader from "react-loaders";
+
 import Product from "./product";
 import * as productActions from "../../../actions/productActions";
-import Button from "../../UI/button";
 
 class ProductsView extends Component {
 	constructor(props) {
@@ -18,44 +20,38 @@ class ProductsView extends Component {
 		this.getProducts = this.getProducts.bind(this);
 	}
 
-	componentDidMount() {
-		this.getProducts();
-	}
-
 	getProducts(reset = false) {
-		let offset = this.props.products.offset;
-		this.props.actions.products.getProducts(reset, offset == undefined ? 0: offset);
+		this.props.actions.products.getProducts(reset);
 	}
 
 	render() {
-		var c = this;
+		const { products } = this.props;
 		
 		return (
-			<div id="content" className="products__view SB">
-				<div className="content__view">
-					{
-						this.props.products.content.map((item, i) => {
-							return (
-								<div className="pro" key={i}>
-									<Product post={item} parent={this} />
-								</div>);
-						})
-					}
-				</div>
+			<div id="content" className="products__view SB" ref={(ref => this.scrollParentRef = ref)}>
 
-				<div className="loadBtn">
-					<Button
-						parent={this}
-						status={0}
-						config={{
-							type: "btn_1",
-							label: "More",
-							text: "",
-							action: () => {
-								c.getProducts();
-							}
-						}} />
-				</div>
+				<InfiniteScroll
+					pageStart={0}
+					loadMore={() => { this.getProducts(); }}
+					hasMore={products.hasMore}
+					useWindow={false}
+					getScrollParent={() => this.scrollParentRef}
+					loader={(<Loader type="line-scale" key={0} />)}
+				>
+					<div className="products__content">
+
+						{
+							products.content.map((item, i) => {
+								return (
+									<div className="pro" key={i}>
+										<Product post={item} parent={this} viewType={1} />
+									</div>);
+							})
+						}
+						
+					</div>
+
+				</InfiniteScroll>
 			</div>
 		);
 	}
@@ -67,12 +63,8 @@ ProductsView.propTypes = {
 };
 
 function mapStateToProps(state) {
-	let products = state.productReducer.products;
 	return {
-		products: {
-			content: products.content,
-			offset: products.offset
-		}
+		products: state.productReducer.products
 	};
 }
 

@@ -21,6 +21,7 @@
             float: left;
             clear: both;
             background-color: transparent;
+            outline: none;
             &::placeholder {
                 color: $color-grey-light;
             }
@@ -28,11 +29,9 @@
     }
     &,
     &--normal {
-        &,
+        color: $color-edulink-secondary;
         input {
             color: $color-edulink-secondary;
-        }
-        input {
             border-bottom: solid .2rem $color-edulink-secondary;
             &:hover {
                 border-bottom-width: .3rem;
@@ -40,47 +39,37 @@
         }
     }
     &--loading {
-        &,
+        color: $color-success-secondary;
         input {
             color: $color-success-secondary;
-        }
-        input {
             border-bottom: solid .2rem $color-success-secondary;
         }
     }
     &--fail {
-        &,
+        color: $color-error-secondary;
         input {
-            color: $color-error-primary;
-        }
-        input {
-            border-bottom: solid .2rem $color-error-primary;
+            color: $color-error-secondary;
+            border-bottom: solid .2rem $color-error-secondary;
         }
     }
     &--success {
-        &,
+        color: $color-success-secondary;
         input {
-            color: $color-success-primary;
-        }
-        input {
-            border-bottom: solid .2rem $color-success-primary;
+            color: $color-success-secondary;
+            border-bottom: solid .2rem $color-success-secondary;
         }
     }
     &--warning {
-        &,
+        color: $color-warning-primary;
         input {
             color: $color-warning-primary;
-        }
-        input {
             border-bottom: solid .2rem $color-warning-primary;
         }
     }
     &--danger {
-        &,
+        color: $color-danger-primary;
         input {
             color: $color-danger-primary;
-        }
-        input {
             border-bottom: solid .2rem $color-danger-primary;
         }
     }

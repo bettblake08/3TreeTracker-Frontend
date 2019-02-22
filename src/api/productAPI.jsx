@@ -1,30 +1,25 @@
-import axios from "axios";
-import { MOCK } from "./config";
+import axios, { axiosProtected, MOCK } from "./config";
 import ProductAPIMock from "./mock/productAPI";
 
 class ProductAPI{
 	static getProductsbyOffset(reset = false, offset = 0, admin = false){
 		if(MOCK) return ProductAPIMock.getProductsbyOffset(reset, offset);
+		if (reset) { offset = 0; }
 
-		if (reset) {
-			offset = 0;
-		}
-
-		return axios(`${admin ? "admin/" : ""}getProducts/${offset}`)
+		const instance = admin ? axiosProtected : axios;
+		return instance(`${admin ? "admin/" : ""}getProducts/${offset}`)
 		.then((response) => {
 			var data = response.data;
-
-			switch (response.status) {
-				case 200: {
-					var content = data.content;
-					offset += data.content.length;
-
-					return { success: true, content, offset };
-				}
+			
+			if(response.status === 200){
+				return {
+					success: true,
+					content: data.content,
+					offset: offset + data.content.length
+				};
 			}
 		}).catch((response) => {
-			var responseStatus = response.status;
-
+			var responseStatus = admin ? response.status: response.response.status;
 			switch (responseStatus) {
 				case 404: {
 					return {
@@ -35,6 +30,15 @@ class ProductAPI{
 						}
 					};
 				}
+				default: {
+					return {
+						success: false,
+						error: {
+							status: responseStatus,
+							message: "Failed to access server!"
+						}
+					};
+				}
 			}
 		});
 	}
@@ -42,9 +46,10 @@ class ProductAPI{
 	static getProduct(productId, admin = false) {
 		if (MOCK) return ProductAPIMock.getProduct(productId);
 
-		return axios(`${admin ? "getProduct": "admin/product" }/${productId}`)
-		.then((response) => {
+		const instance = admin ? axiosProtected : axios;
 
+		return instance(`${admin ? "admin/product" : "getProduct" }/${productId}`)
+		.then((response) => {
 			if (response.status === 200) {
 				var data = response.data;
 
@@ -54,9 +59,8 @@ class ProductAPI{
 					likes: data.content.likes == undefined ? 0 : data.content.likes.length
 				};
 			}
-
 		}).catch((response) => {
-			if (response.status !== 200) {
+			if (response.response.status !== 200) {
 				return {
 					success: false,
 					error: {
@@ -70,7 +74,7 @@ class ProductAPI{
 	static postProduct(product) {
 		if (MOCK) return ProductAPIMock.postProduct(product);
 
-		return axios({
+		return axiosProtected({
 			url: `admin/product/0`,
 			method: "POST",
 			data: product
@@ -83,6 +87,7 @@ class ProductAPI{
 			switch (response.status) {
 				default: {
 					return {
+						success: false,
 						error: {
 							status: response.status,
 							message: "Failed to access server. Please try again in a few minutes."
@@ -96,7 +101,7 @@ class ProductAPI{
 	static updateProduct(product){
 		if (MOCK) return ProductAPIMock.updateProduct(product);
 
-		return axios({
+		return axiosProtected({
 			url: `admin/product/${product.pro__id}`,
 			method: "PUT",
 			data: product
@@ -129,6 +134,27 @@ class ProductAPI{
 				}
 			}
 
+		});
+	}
+
+	static reactToProduct(productId, reaction = 0) {
+
+		return axiosProtected(`productReaction/${productId}/${reaction}`)
+		.then((response) => {
+
+			if (response.status === 200) {
+				return {	success: true	};
+			}
+
+		}).catch((response) => {
+			if(response.status !== 200){
+				return {
+					success: false,
+					error: {
+						status: response.status
+					}
+				}
+			}
 		});
 	}
 }

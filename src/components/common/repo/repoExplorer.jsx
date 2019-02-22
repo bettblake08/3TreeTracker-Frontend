@@ -23,10 +23,10 @@ class RepoExplorer extends Component {
 	}
 
 	setRepoDirName() {
-		var breadCrumb = "root";
+		var breadCrumb = "";
 		
 		this.props.repo.folderDirs.forEach((folderName)=>{
-			breadCrumb += `/${folderName}`;
+			breadCrumb += `${folderName}/`;
 		});
 
 		return breadCrumb;
@@ -38,15 +38,14 @@ class RepoExplorer extends Component {
 	}
 
 	render() {
-		var repo = this.props.main;
 
 		return (
 			<div className="repo__explorer">
 
 				{/*  <RepoStatistics repo={repo} /> */}
 
-				<RepoFileUpload main={repo} />
-				<RepoCreateFolder main={repo} />
+				<RepoFileUpload />
+				<RepoCreateFolder />
 
 				<div className="repo__explorer__topBar ">
 					<div className="repo__explorer__topBar__fName f_h1">{this.setRepoDirName()}</div>
@@ -98,14 +97,13 @@ class RepoExplorer extends Component {
 
 
 RepoExplorer.propTypes = {
-	main: PropTypes.object.isRequired,
 	repo: PropTypes.object.isRequired,
 	actions: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state){
 	return {
-		repo: state.repoReducer.repo
+		repo: state.repoReducer
 	};
 }
 

@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { PasswordInput } from "../../UI/newPasswordInput";
 import TextInput from "../../UI/textInput";
 import Button from "../../UI/button";
-import * as AdminAccountAuthActions from "../../../actions/longrichAccountAuthActions";
+import * as AuthenticationActions from "../../../actions/authenticationActions";
 
 
 class AccountLogin extends Component {
@@ -147,7 +147,7 @@ class AccountLogin extends Component {
 								}} />
 						</div>
 
-						<div className={this.state.error != 0 ? loginError + "--active" : loginError + "--disabled"}>{errorText}</div>
+						<div className={`${loginError}--${this.state.error != 0 ? "active" : "disabled"}`}>{errorText}</div>
 
 						<div className="loginForm__btn">
 							<Button
@@ -183,7 +183,7 @@ function mapStateToProps() {
 function mapDispatchToProps(dispatch) {
 	return {
 		actions: {
-			adminLogin: bindActionCreators(AdminAccountAuthActions, dispatch)
+			adminLogin: bindActionCreators(AuthenticationActions, dispatch)
 		}
 	};
 }

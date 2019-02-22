@@ -1,49 +1,52 @@
 import { MOCK_DELAY as DELAY } from "../config";
 
-let responseStatus = 200;
-let products = {
-	content: [
-		{
-			"log": {
-				"created_at": "2018-12-02 13:50:47",
-				"id": 1,
-				"postId": 1,
-				"type": 1
-			},
-			"post": {
-				"body": "",
-				"id": 1,
-				"image": {
-					"folderId": 1,
-					"id": 1,
-					"name": "G67S5A",
-					"originalName": "test",
-					"type": "jpg",
-					"uuid": "11aa"
-				},
-				"stat": {
-					"comments": 0,
-					"reactions": 0,
-					"views": 1
-				},
-				"stats": [],
-				"summary": "This is a test product",
-				"title": "This is a test product"
-			},
-			"tags": [
-				{
-					"id": 1,
-					"name": "soap"
-				}
-			]
-		}
-	]
-};
 
 let product = {
-	content: {},
+	content: {
+		"log": {
+			"created_at": "2018-12-02 13:50:47",
+			"id": 1,
+			"postId": 1,
+			"type": 1
+		},
+		"post": {
+			"body": "",
+			"id": 1,
+			"image": {
+				"folderId": 1,
+				"id": 1,
+				"name": "A67S5A",
+				"originalName": "test",
+				"type": "jpg",
+				"uuid": "11aa"
+			},
+			"stat": {
+				"comments": 0,
+				"reactions": 0,
+				"views": 1
+			},
+			"stats": [],
+			"summary": "This is a test product",
+			"title": "This is a test product"
+		},
+		"tags": [
+			{
+				"id": 1,
+				"name": "soap"
+			}
+		]
+	},
 	likes: {}
 };
+
+let responseStatus = 200;
+let products = {
+	content: []
+};
+
+for(var i = 0; i < 100; i++){
+	products.content.push(product.content);
+}
 
 class ProductAPI{
 	static getProductsbyOffset(reset = false, offset = 0){
@@ -53,15 +56,16 @@ class ProductAPI{
 
 		return new Promise((resolve)=>{
 			setTimeout(()=>{
-				offset += products.content.length;
-
-				if (responseStatus == 200) {
-					resolve({ content: products.content, offset });
+				const responseContent = products.content.slice(offset, offset + 20);
+				offset += responseContent.length;
+				if (responseContent.length > 0) {
+					resolve({ success: true, content: responseContent, offset });
 				}
 				else {
 					resolve({
+						success: false,
 						error: {
-							status: responseStatus,
+							status: 404,
 							message: "There are no more products to retrieve."
 						}
 					});
@@ -75,12 +79,14 @@ class ProductAPI{
 			setTimeout(()=>{
 				if (responseStatus == 200) {
 					resolve({
+						success: true,
 						product: product.content,
 						likes: product.likes
 					});
 				}
 				else {
 					resolve({
+						success: false,
 						error: {
 							status: responseStatus
 						}
@@ -98,6 +104,7 @@ class ProductAPI{
 				}
 				else {
 					resolve({
+						success: false,
 						error: {
 							status: responseStatus,
 							message: "Failed to access server. Please try again in a few minutes."
@@ -116,6 +123,7 @@ class ProductAPI{
 				}
 				else {
 					resolve({
+						success: false,
 						error: {
 							status: responseStatus,
 							message: "Failed to access server. Please try again in a few minutes."

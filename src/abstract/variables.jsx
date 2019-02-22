@@ -9,7 +9,7 @@ import LADDER from "../assets/images/ladder.jpg";
 
 const WEB_URL = "http://localhost:5000/";
 const SOCKET_URL = "ws://localhost:8080/";
-const API_URL = `${WEB_URL}api/v1/`;
+const API_URL = process.env.REACT_APP_API;
 
 //let SOCKET_URL = "wss://900bbd6f.ngrok.io:8080/";
 //let WEB_URL = "https://900bbd6f.ngrok.io/";

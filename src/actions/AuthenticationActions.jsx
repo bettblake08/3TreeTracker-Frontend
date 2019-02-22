@@ -1,7 +1,6 @@
 import * as types from "./actionTypes";
 import AuthenticationAPI from "../api/authenticationAPI";
 import {history} from "../store/configureStore";
-import {checkIfUnauthorized} from "./helpers";
 
 export function adminLoginSuccess(data){
 	return {type: types.ADMIN_LOGIN_SUCCESS, data};
@@ -10,7 +9,7 @@ export function adminLoginSuccess(data){
 export function adminLogin(loginDetails, onSuccess = () => {}, onFailure = () => {}) {
 	return (dispatch) => {
 		return AuthenticationAPI
-			.login(loginDetails)
+			.adminLogin(loginDetails)
 			.then((response) => {
 			if (response.success) {
 				onSuccess();
@@ -36,9 +35,8 @@ export function adminLogout(onSuccess = () => { }, onFailure = () => { }) {
 				dispatch(adminLogoutSuccess());
 				history.push("login");
 			}
-			else {
-				if (checkIfUnauthorized(response, dispatch)) return;				
-				onFailure(response);
+			else {			
+				onFailure();
 			}
 		});
 	};

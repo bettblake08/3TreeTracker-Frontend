@@ -39,26 +39,20 @@ class LongrichAccountAPI{
 		});
 	}
 
-	static getAccounts(filter, offset = 0, admin=false){
-		return axiosProtected(`${admin ? "admin/" : ""}getAccounts/${filter.name}/${filter.country}/${offset}`)
+	static getAccounts(filter, offset = 0, admin = false){
+
+		return axiosProtected(`${admin ? "admin/" : ""}getAccounts?offset=${offset}
+			${filter.name !== "" ? "&name=" + filter.name : ""}
+			${filter.country !== "" ? "&country=" + filter.country : ""}
+			`)
 		.then((response) => {
 			if (response.status === 200) {
 				var data = response.data;
-
-				if (data.content.length == 0) {
-					return {
-						success: false,
-						error: {
-							message: "There are no more accounts to retrieve. Continue creating more.",
-							status: response.status
-						}
-					};
-				}
 				
 				return {
 					success: true,
 					content: data.content,
-					offset: data.content.length
+					offset: offset + data.content.length
 				};
 			}
 

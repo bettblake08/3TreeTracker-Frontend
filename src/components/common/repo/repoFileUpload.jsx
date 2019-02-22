@@ -28,13 +28,10 @@ class RepoFileUpload extends Component {
 		s.async = false;
 		s.innerHTML = ReactDOMServer.renderToString(this.qqTemplate());
 		this.instance.appendChild(s);
-
-		/*  console.log(s); */
 	}
 
 	componentDidUpdate() {
 		document.getElementById("uploader").innerHTML = "";
-		//$('#uploader').html("");
 
 		var uploader = new qq.FineUploader({
 			element: this.uploader,
@@ -43,9 +40,6 @@ class RepoFileUpload extends Component {
 				enabled: true,
 				concurrent: {
 					enabled: true
-				},
-				success: {
-					endpoint: "uploadtoRepoCompleted"
 				}
 			},
 			enableAuto: true,
@@ -168,8 +162,8 @@ class RepoFileUpload extends Component {
 	}
 
 	toggleUploadFileDisplay() {
-		var mainRepoComponent = this.props.main;
-		mainRepoComponent.setState({uploadFileDisplay: !mainRepoComponent.state.uploadFileDisplay});
+		const { mainComponent } = this.props.repo;
+		mainComponent.setState({uploadFileDisplay: !mainComponent.state.uploadFileDisplay});
 	}
 
 	render() {
@@ -191,13 +185,12 @@ class RepoFileUpload extends Component {
 
 RepoFileUpload.propTypes = {
 	actions: PropTypes.object.isRequired,
-	repo: PropTypes.object.isRequired,
-	main: PropTypes.object.isRequired
+	repo: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state){
 	return {
-		repo: state.repoReducer.repo
+		repo: state.repoReducer
 	};
 }
 

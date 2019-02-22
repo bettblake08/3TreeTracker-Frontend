@@ -4,8 +4,8 @@
 .ePP {
     position: fixed;
     z-index: 9999;
-    bottom: 1rem;
-    left: 3rem;
+    bottom: 2rem;
+    right: 3rem;
     width: 20%;
     @include respond(tab-port) {
         width: 35%;

@@ -2,70 +2,49 @@ import * as types from "./actionTypes";
 import ProductAPI from "../api/productAPI";
 import * as errorPopup from "./errorPopupActions";
 import * as apiCall from "./apiCallActions";
-import {checkIfUnauthorized} from "./helpers";
 
-export function getProductsSuccess(data){
-	return (dispatch) => {
-		return dispatch({ type: types.GET_PRODUCTS_SUCCESS, data });
-	};
-}
+export const getProductsSuccess = (data) => ({ type: types.GET_PRODUCTS_SUCCESS, data });
+export const getProductsIsLoading = () => ({ type: types.GET_PRODUCTS_LOADING });
+export const getProductsFailure = () => ({ type: types.GET_PRODUCTS_FAILURE });
 
-export function getProducts(reset = false, offset = 0){
-	return (dispatch) => {
-		return ProductAPI.getProductsbyOffset(reset, offset).then((response) => {
-			if(response.error == undefined){
-				dispatch(getProductsSuccess(response));
+export function getProducts(reset = false, admin = false){
+	return (dispatch, getState) => {
+		const { offset } = getState().productReducer.products;
+
+		return ProductAPI.getProductsbyOffset(reset, offset, admin).then((response) => {
+			
+			if(response.success){
+				if(response.content.length === 0){ 
+					dispatch(getProductsFailure());
+				}
+				else {
+					dispatch(getProductsSuccess({ ...response, reset }));
+				}
 			}
 			else {
-				dispatch(errorPopup.displayErrorMessage(response.error.message));
+				if(response.error.status === 404){
+					dispatch(getProductsFailure());
+				}
+				else {
+					dispatch(apiCall.reloadAPICall(`getProducts${admin ? "AsAdmin" : ""}`, 5));
+					dispatch(errorPopup.displayErrorMessage(response.error.message));
+				}
 			}
 		});
 	};
 }
 
-export function getProductSuccess(data) {
-	return (dispatch) => {
-		return dispatch({ type: types.GET_PRODUCT_SUCCESS, data});
-	};
-}
+export const getProductSuccess = (data) => ({ type: types.GET_PRODUCT_SUCCESS, data });
 
-export function getProduct(productId) {
+export function getProduct(productId, onSuccess = () => { }, admin = false) {
 	return (dispatch) => {
-		return ProductAPI.getProduct(productId).then((response) => {
-			if (response.error == undefined) {
+		ProductAPI.getProduct(productId, admin).then((response) => {
+			if (response.success) {
 				dispatch(getProductSuccess(response));
+				onSuccess();
 			}
 			else {
-				dispatch(apiCall.reloadAPICall("getProduct", 5));
-			}
-		});
-	};
-}
-
-export function getProductAsAdmin(productId, onSuccess = () => {}) {
-	return (dispatch) => {
-		return ProductAPI.getProductAsAdmin(productId).then((response) => {
-			if (response.error == undefined) {
-				onSuccess(response);
-			}
-			else {
-				checkIfUnauthorized(response, dispatch);
-				dispatch(apiCall.reloadAPICall("getProductAsAdmin", 5));
-			}
-		});
-	};
-}
-
-export function getProductsAsAdmin(reset = false, offset = 0, onSuccess = () => { }) {
-	return (dispatch) => {
-		return ProductAPI.getProductsbyOffset(reset, offset, true).then((response) => {
-			if (response.error == undefined) {
-				onSuccess(response);
-				dispatch(getProductsSuccess(response));
-			}
-			else {
-				checkIfUnauthorized(response, dispatch);
-				dispatch(apiCall.reloadAPICall("getProductsAsAdmin", 5));
+				dispatch(apiCall.reloadAPICall(`getProduct${admin ? "AsAdmin" : ""}`, 5));
 			}
 		});
 	};
@@ -74,11 +53,10 @@ export function getProductsAsAdmin(reset = false, offset = 0, onSuccess = () => 
 export function postProduct(product, onSuccess = () => { }) {
 	return (dispatch) => {
 		return ProductAPI.postProduct(product).then((response) => {
-			if (response.error == undefined) {
+			if (response.success) {
 				onSuccess(response);
 			}
 			else {
-				checkIfUnauthorized(response, dispatch);
 				dispatch(errorPopup.displayErrorMessage(response.error.message));
 			}
 		});
@@ -88,13 +66,39 @@ export function postProduct(product, onSuccess = () => { }) {
 export function updateProduct(product, onSuccess = () => { }) {
 	return (dispatch) => {
 		return ProductAPI.updateProduct(product).then((response) => {
-			if (response.error == undefined) {
+			if (response.success) {
 				onSuccess(response);
 			}
 			else {
-				checkIfUnauthorized(response, dispatch);
 				dispatch(errorPopup.displayErrorMessage(response.error.message));
 			}
 		});
 	};
+}
+
+export const reactToProductSuccess = (data) => ({ type: types.REACT_TO_PRODUCT_SUCCESS, data });
+export const reactToProductLoading = () => ({ type: types.REACT_TO_PRODUCT_LOADING });
+
+export const reactToProduct = (reaction, onSuccess = () => {}) => (dispatch, getState) => {
+	let productId = getState().productReducer.product.id;
+	let userId = getState().loginAuthReducer.auth.user.id;
+
+	if (userId === undefined) return dispatch(errorPopup.displayErrorMessage(
+		"Please login as a Longrich User to use this feature!"
+	));
+
+	dispatch(reactToProductLoading());
+
+	return ProductAPI.reactToProduct(productId, reaction)
+		.then(response => {
+			dispatch(reactToProductLoading({}));
+
+			if(response.success){
+				dispatch(reactToProductSuccess());
+				onSuccess();
+			}
+			else {
+				dispatch(errorPopup.displayErrorMessage(response.error.message));
+			}
+		});
 }

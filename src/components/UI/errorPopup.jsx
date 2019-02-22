@@ -1,21 +1,18 @@
 import React, { Component } from "react";
 import {connect} from "react-redux";
 import PropTypes from "prop-types";
-import {bindActionCreators} from "redux";
-import * as ErrorPopupActions from "../../actions/errorPopupActions";
 
-class ErrorPopup extends Component {
-	render() {
-		return (
-			<div className="ePP">
-				{ 
-					this.props.errorPopup.errors.map((item,i)=>{
-						return <ErrorMessage error={item} key={i}/>;
-					})
-				}
-			</div>
-		);
-	}
+
+function ErrorPopup(props) {
+	return (
+		<div className="ePP">
+			{
+				props.errorPopup.errors.map((item, i) => {
+					return <ErrorMessage error={item} key={i} />;
+				})
+			}
+		</div>
+	)
 }
 
 class ErrorMessage extends Component {
@@ -39,12 +36,12 @@ class ErrorMessage extends Component {
 	}
 
 	togglePopup(){
-		this.setState({ togglePopup: this.state.togglePopup ? false : true});
+		this.setState({ togglePopup: !this.state.togglePopup});
 	}
 
 	render() {
 		return (
-			<div className={this.state.togglePopup == false ? "ePP__error--disabled" : "ePP__error--active"}>
+			<div className={`ePP__error--${this.state.togglePopup ? "active" : "disabled" }`}>
 				<div className="ePP__error__icon">
 					<svg className="icon">
 						<use xlinkHref="#warning" />
@@ -59,7 +56,6 @@ class ErrorMessage extends Component {
 }
 
 ErrorPopup.propTypes = {
-	actions: PropTypes.object.isRequired,
 	errorPopup: PropTypes.object.isRequired
 };
 
@@ -69,20 +65,9 @@ ErrorMessage.propTypes = {
 };
 
 function mapStateToProps(state) {
-	let errorPopup = state.errorPopupReducer.errorPopup;
 	return {
-		errorPopup:  errorPopup == undefined ? { errors: [] } : errorPopup
+		errorPopup: state.errorPopupReducer.errorPopup
 	};
 }
 
-function mapDispatchToProps(dispatch){
-	return {
-		actions:{
-			errorPopup: bindActionCreators(ErrorPopupActions, dispatch)
-		}
-	};
-}
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(ErrorPopup);
+export default connect(mapStateToProps)(ErrorPopup);

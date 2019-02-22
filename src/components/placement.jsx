@@ -6,8 +6,8 @@ import * as PlacementActions from "../actions/placementActions";
 
 class Placement extends Component {
 	render() {
-		var tag = this.props.tag;
-		var name = + `${tag.name} ${tag.surname}`;
+		var placement = this.props.placement;
+		var name = `${placement.name} ${placement.surname}`;
 
 		return (
 			<div className="tag">
@@ -32,7 +32,7 @@ class Placement extends Component {
 
 Placement.propTypes = {
 	actions: PropTypes.object.isRequired,
-	tag: PropTypes.object.isRequired
+	placement: PropTypes.object.isRequired
 };
 
 function mapStateToProps() {

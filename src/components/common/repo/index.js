@@ -11,6 +11,7 @@ import DeleteFolderConfirmationPopUp from "./deleteFolderConfirmationPopUp";
 import DeleteFileConfirmationPopUp from "./deleteFileConfirmationPopUp";
 
 import * as RepoActions from "../../../actions/repoActions";
+import * as HelperActions from "../../../actions/helpers";
 
 class Repo extends Component {
 
@@ -25,19 +26,15 @@ class Repo extends Component {
         5 -- multiple document files
         */
 		var types = null;
-		var rCount = null;
 
-		switch (this.props.selectionType) {
-		case 0: {
-			break;
-		}
+		switch (props.selectionType) {
+		case 0: break;
 		case 1:
 		case 2:
 		case 3:
 		{
 			//Rquired amount of images need to be specified requiredCount
-			types = this.props.types;
-			rCount = this.props.requiredCount == undefined;
+			types = props.types;
 
 			if (types == undefined) { types = ["png", "jpg", "jpeg"]; }
 			break;
@@ -46,42 +43,47 @@ class Repo extends Component {
 		case 4:
 		case 5:
 		{
-			types = this.props.types;
-			rCount = this.props.requiredCount;
+			types = props.types;
 
 			if (types == undefined) { types = ["doc", "docx"]; }
 			break;
 		}
 
-		case "default": return;
+		default: return;
 		}
 
-		this.props.actions.repo.setRepoSettings({
-			selectionType: this.props.selectionType,
+		props.actions.repo.setRepoSettings({
+			selectionType: props.selectionType,
 			requiredTypes: types,
-			requiredCount: rCount == undefined ? 0 : rCount
+			requiredCount: props.requiredCount
 		});
-
-		this.state = {
-			popup: 0,
-			popups: [],
-			loaded: false
-		};
 
 		this.loadRepoContent = this.loadRepoContent.bind(this);
 		this.changeFolderDirectory = this.changeFolderDirectory.bind(this);
 		this.repoFileSelected = this.repoFileSelected.bind(this);
 		this.exitRepo = this.exitRepo.bind(this);
-		this.toggleDeleteFileConfirmationPopUp = this.toggleDeleteFileConfirmationPopUp.bind(this);
-		this.loadDeleteFileConfirmationPopUp = this.loadDeleteFileConfirmationPopUp.bind(this);
-		this.toggleDeleteFolderConfirmationPopUp = this.toggleDeleteFolderConfirmationPopUp.bind(this);
-		this.loadDeleteFolderConfirmationPopUp = this.loadDeleteFolderConfirmationPopUp.bind(this);
-		
 	}
 
 	componentDidMount() {
-		this.setState({loaded: true});
 		this.loadRepoContent();
+		this.props.actions.repo.setMainRepoComponent({
+			loadRepoContent: this.loadRepoContent,
+			changeFolderDirectory: this.changeFolderDirectory,
+			repoFileSelected: this.repoFileSelected,
+			exitRepo: this.exitRepo
+		});
+	}
+
+	componentDidUpdate(prevProps){
+		const { popups, popupComponent, repo, actions } = this.props;
+		if(prevProps.repo.currentFolder.id !== repo.currentFolder.id){
+			this.loadRepoContent();
+		}
+
+		if (popups.repoPopup) {
+			actions.helper.togglePopup("repoPopup");
+			popupComponent.toggleContent();
+		}
 	}
 
 	repoFileSelected() {
@@ -89,15 +91,16 @@ class Repo extends Component {
 
 		if (selectedFiles.length == 0) { return; }
 
+		const { repo } = this.props;
 		var file = selectedFiles[0].file;
 
-		switch (this.props.repo.selectionType) {
+		switch (repo.settings.selectionType) {
 		case 1:
 		{
 			var preview = document.querySelectorAll(".repoImagePreview");
 
 			preview.forEach((e)=>{
-				e.setAttribute("style", `background: url("${this.props.repo.contentdir}${file.name}.${file.type}") center ; background-size:cover;`);
+				e.setAttribute("style", `background: url("${repo.contentdir}${file.name}.${file.type}") center ; background-size:cover;`);
 				e.dataset.image = JSON.stringify(file);
 			});
 
@@ -107,7 +110,7 @@ class Repo extends Component {
 		case 2: {
 			var imagePreview = document.querySelector(".repoImagePreview img");
             
-			imagePreview.setAttribute("src", `${this.props.repo.contentdir}/${file.name}.${file.type}`);
+			imagePreview.setAttribute("src", `${repo.contentdir}/${file.name}.${file.type}`);
 			imagePreview.dataset.image = file;
 
 			this.exitRepo();
@@ -115,7 +118,6 @@ class Repo extends Component {
 		}
 		case 4:
 		case 5: {
-			this.props.parent.setState({selectedFiles});
 			this.exitRepo();
 			break;
 		}
@@ -123,7 +125,7 @@ class Repo extends Component {
 	}
 
 	exitRepo() {
-		this.props.parent.toggleRepo();
+		this.props.actions.helper.togglePopup("repoPopup");
 	}
 
 	loadRepoContent() {
@@ -136,59 +138,49 @@ class Repo extends Component {
 		this.loadRepoContent();
 	}
 
-	toggleDeleteFileConfirmationPopUp() {
-		this.state.popups[0].toggleContent();
-	}
-
-	loadDeleteFileConfirmationPopUp() {
-		if (this.state.loaded) {
-			return (<Popup component={<DeleteFileConfirmationPopUp />} parent={this} />);
-		}
-	}
-
-	toggleDeleteFolderConfirmationPopUp() {
-		this.state.popups[1].toggleContent();
-	}
-
-	loadDeleteFolderConfirmationPopUp() {
-		if (this.state.loaded) {
-			return (<Popup component={<DeleteFolderConfirmationPopUp />} parent={this} />);
-		}
-	}
-
 	render() {
 		return (
 			<div className="repo SB">
-				<RepoExplorer main={this} />
-				<RepoCategoryView main={this} />
+				<RepoExplorer />
+				<RepoCategoryView />
 
-				{this.loadDeleteFileConfirmationPopUp()}
-				{this.loadDeleteFolderConfirmationPopUp()}
+				<Popup component={<DeleteFileConfirmationPopUp />} />
+				<Popup component={<DeleteFolderConfirmationPopUp />} />
 			</div>
 		);
 	}
 }
 
 Repo.propTypes = {
+	popupComponent: PropTypes.object,
 	parent: PropTypes.object,
-	selectionType: PropTypes.number.isRequired,
+	selectionType: PropTypes.number,
 	types: PropTypes.object,
 	requiredCount: PropTypes.number,
 	repo: PropTypes.object.isRequired,
-	actions: PropTypes.object.isRequired
+	actions: PropTypes.object.isRequired,
+	popups: PropTypes.object.isRequired
 };
+
+Repo.defaultTypes = {
+	requiredCount: 0
+}
+
 
 function mapStateToProps(state){
 	return {
-		repo: state.repoReducer.repo
+		repo: state.repoReducer,
+		popups: state.popupReducer
 	};
 }
 
 function mapDispatchToProps(dispatch){
 	return {
 		actions:{
-			repo: bindActionCreators(RepoActions, dispatch)
+			repo: bindActionCreators(RepoActions, dispatch),
+			helper: bindActionCreators(HelperActions, dispatch)
 		}
 	};
 }
+
 export default connect(mapStateToProps, mapDispatchToProps)(Repo);

@@ -2,6 +2,22 @@ import webpack from "webpack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import path from "path";
 import HardSourceWebpackPlugin from "hard-source-webpack-plugin"; 
+import dotenv from "dotenv";
+import fs from "fs";
+
+
+const basePath =`${path.join(__dirname)}/.env`;
+const envPath = `${basePath}.dev`;
+
+// Check if the file exists, otherwise fall back to the production .env
+const finalPath = fs.existsSync(envPath) ? envPath : basePath;
+
+const ENV = dotenv.config({path: finalPath }).parsed;
+
+const ENV_KEYS = Object.keys(ENV).reduce((prev, next) => {
+	prev[`process.env.${next}`] = JSON.stringify(ENV[next]);
+	return prev;
+}, {});
 
 export default {
 	resolve: {
@@ -19,12 +35,13 @@ export default {
 	output: {
 		path: path.resolve(__dirname, "dist"),
 		publicPath: "/",
-		filename: "bundle.js"
+		filename: "[name].bundle.js"
 	},
 	plugins: [
 		new HardSourceWebpackPlugin(),
 		new webpack.HotModuleReplacementPlugin(),
 		new webpack.NoEmitOnErrorsPlugin(),
+		new webpack.DefinePlugin(ENV_KEYS),
 		new HtmlWebpackPlugin({ 
 			template: "src/index.ejs",
 			minify: {

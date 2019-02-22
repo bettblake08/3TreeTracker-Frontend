@@ -33,21 +33,16 @@ class MainHeader extends Component {
 		var scrollYpos = window.scrollY;
 
 		if (scrollYpos > offset && state.toggleHeader == 0) {
-			state.toggleHeader = 1;
-			this.setState(state);
-
+			this.setState({ toggleHeader: 1 });
 		}
 		else if (scrollYpos < offset && state.toggleHeader == 1) {
-			state.toggleHeader = 0;
-			this.setState(state);
+			this.setState({ toggleHeader: 0 });
 		}
 
 	}
 
 	togglePopupMenu(menu) {
-		var state = this.state;
-		state.togglePopupMenu = state.togglePopupMenu == menu ? 0 : menu;
-		this.setState(state);
+		this.setState({ togglePopupMenu: this.state.togglePopupMenu === menu ? 0 : menu });
 	}
 
 	render() {

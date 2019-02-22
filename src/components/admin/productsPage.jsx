@@ -15,8 +15,8 @@ class Products extends Component {
 		this.state = {
 			view: 1,
 			AddProduct:{},
-			EditProduct:{},
-			ProductsView:{}
+			ProductsView:{},
+			productOnFocus: 0
 		};
 
 		this.setView = this.setView.bind(this);
@@ -24,6 +24,10 @@ class Products extends Component {
 
 	setView(option) {
 		this.setState({view: option});
+	}
+
+	setFocusOnProduct(productId){
+		this.setState({ productOnFocus: productId });
 	}
 
 	render() {
@@ -36,11 +40,11 @@ class Products extends Component {
 				</div>
 
 				<div className={`view--${this.state.view == 2 ? "active" : "disabled"}`}>
-					<AddProduct parent={this} />
+					{this.state.view === 2 ? <AddProduct parent={this} /> : null}
 				</div>
 
 				<div className={`view--${this.state.view == 3 ? "active" : "disabled"}`}>
-					<EditProduct parent={this} productId={0} />
+					{this.state.view === 3 ? <EditProduct parent={this} productId={this.state.productOnFocus} /> : null }
 				</div>
 
 			</div>

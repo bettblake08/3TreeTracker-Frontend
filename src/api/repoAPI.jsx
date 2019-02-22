@@ -11,7 +11,7 @@ class RepoAPI{
 				case 200: {
 					return ({ success: true, content: data.content });
 				}
-				case 302: {
+				default: {
 					return {
 						success: false,
 						error: {
@@ -19,15 +19,6 @@ class RepoAPI{
 						}
 					};
 				}
-			}
-		}).catch((response) => {
-			if (response.response.status !== 200) {
-				return {
-					success: false, 
-					error: {
-						status: response.status
-					}
-				};
 			}
 		});
 	}
@@ -41,7 +32,7 @@ class RepoAPI{
 				name: folderName
 			}
 		}).then((response) => {
-			if (response.status === 200) {
+			if (response.status === 201) {
 				return { success: true };
 			}
 
@@ -85,6 +76,28 @@ class RepoAPI{
 	static deleteFileFromRepo(fileId, delChoice){
 		return axiosProtected({
 			url: `admin/repoFile/${fileId}`,
+			method: delChoice ? "DELETE" : "GET"
+		}).then((response) => {
+			if (response.status == 200) {
+				return ({ success: true });
+			}
+		}).catch((response) => {
+			switch (response.response.status) {
+				default: {
+					return {
+						error: {
+							status: response.response.status,
+							message: "Accesss to server failed. Please try again later!"
+						}
+					};
+				}
+			}
+		});
+	}
+
+	static deleteFolderFromRepo(folderId, delChoice) {
+		return axiosProtected({
+			url: `admin/repoFolder/${folderId}`,
 			method: delChoice ? "DELETE" : "GET"
 		}).then((response) => {
 			if (response.status == 200) {

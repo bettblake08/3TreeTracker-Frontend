@@ -39,87 +39,102 @@
             display: none;
         }
     }
-}
 
-.comment {
-    width: 100%;
-    height: auto;
-    padding: 3rem 5%;
-    float: left;
-    &__user {
-        float: left;
-        &__pic {
-            width: 5rem;
-            height: 5rem;
-            border-radius: 50%;
-            float: left;
-            img {
-                width: 100%;
-                height: auto;
-            }
-        }
-    }
-    &__right {
-        float: left;
-        padding-left: 2rem;
-        width: 90%;
-        &__top {
-            float: left;
-            &__name {
-                float: left;
-                color: $color-grey-dark;
-                padding: .5rem 2rem .5rem 0;
-                text-indent: 0;
-            }
-            &__time {
-                height: auto;
-                color: $color-edulink-secondary;
-                padding: .8rem 0;
-                float: left;
-            }
-        }
-    }
-    &__bottom {
+    .comment {
         width: 100%;
         height: auto;
+        padding: 3rem 5%;
         float: left;
-    }
-    &__stats {
-        float: right;
-        &__comment,
-        &__likes {
-            color: $color-edulink-secondary;
-            min-width: 5%;
-            float: right;
-            height: 3rem;
-            margin: 0 .5rem;
+
+        &__user {
+            float: left;
+
+            &__pic {
+                width: 5rem;
+                height: 5rem;
+                border-radius: 50%;
+                float: left;
+
+                img {
+                    width: 100%;
+                    height: auto;
+                }
+            }
         }
-        &__values {
-            padding: .5rem;
+
+        &__right {
+            float: left;
+            padding-left: 2rem;
+            width: 90%;
+
+            &__top {
+                float: left;
+
+                &__name {
+                    float: left;
+                    color: $color-grey-dark;
+                    padding: .5rem 2rem .5rem 0;
+                    text-indent: 0;
+                }
+
+                &__time {
+                    height: auto;
+                    color: $color-edulink-secondary;
+                    padding: .8rem 0;
+                    float: left;
+                }
+            }
+        }
+
+        &__bottom {
+            width: 100%;
+            height: auto;
+            float: left;
+        }
+
+        &__stats {
+            float: right;
+
+            &__comment,
+            &__likes {
+                color: $color-edulink-secondary;
+                min-width: 5%;
+                float: right;
+                height: 3rem;
+                margin: 0 .5rem;
+            }
+
+            &__values {
+                padding: .5rem;
+                color: $color-grey-dark;
+                float: right;
+            }
+
+            &__icon {
+                width: 3rem;
+                height: 3rem;
+                padding: .5rem;
+                overflow: hidden;
+                float: left;
+            }
+        }
+
+        &__buttons {
+            float: left;
+
+            &__button {
+                width: 10rem;
+                height: 3rem;
+                float: left;
+            }
+        }
+
+        &__text {
+            width: 100%;
             color: $color-grey-dark;
-            float: right;
-        }
-        &__icon {
-            width: 3rem;
-            height: 3rem;
-            padding: .5rem;
-            overflow: hidden;
+            min-height: 5rem;
             float: left;
         }
-    }
-    &__buttons {
-        float: left;
-        &__button {
-            width: 10rem;
-            height: 3rem;
-            float: left;
-        }
-    }
-    &__text {
-        width: 100%;
-        color: $color-grey-dark;
-        min-height: 5rem;
-        float: left;
     }
 }
 

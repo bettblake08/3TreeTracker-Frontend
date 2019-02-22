@@ -1,6 +1,6 @@
 import * as types from "./actionTypes";
 
-export function reloadAPICall(request, max = 3) {
+export function reloadAPICall(requestName, request, max = 3, onMaxOut = ()=> {}) {
 	return (dispatch, getState) => {
 		const attempts = getState.apiCallReducer[request.name].attempts;
 
@@ -10,8 +10,8 @@ export function reloadAPICall(request, max = 3) {
 		}
 		else {
 			dispatch(resetAPICount(request.name));
+			onMaxOut();
 		}
-		
 	};
 }
 

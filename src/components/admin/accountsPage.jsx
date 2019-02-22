@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import PropTypes from "prop-types";
+import InfiniteScroll from "react-infinite-scroller";
+import Loader from "react-loaders";
 
 import { getCountries } from "../../abstract/country";
 import Button from "../UI/button";
@@ -21,10 +23,9 @@ class AccountsView extends Component {
 
 		this.state = {
 			filterSearch:{
-				name:"0",
-				country:"0",
+				name: "",
+				country: "",
 			},
-			popups:[],
 			buttons:[],
 			textInputs:[],
 			dropdownInputs:[],
@@ -33,43 +34,41 @@ class AccountsView extends Component {
 		};
 
 		this.getAccounts = this.getAccounts.bind(this);
-		this.toggleEditAccountPopup = this.toggleEditAccountPopup.bind(this);
-		this.loadEditAccountPopup = this.loadEditAccountPopup.bind(this);
+		this.loadMore = this.loadMore.bind(this);
+		this.onFilter = this.onFilter.bind(this);
 	}
 
 	componentDidMount(){
-		this.setState({laoded: true});
+		this.setState({loaded: true});
 		this.getAccounts();
 	}
 
 	getAccounts(reset = false) {
 		var c = this;
 		var state = c.state;
-		const {longrichAccounts} = this.props;
 
-		if(reset){
-			state.offset = 0;
-			state.content = [];
-		}
-		
-		this.props.actions.longrichAccount.getLongrichAccountsAsAdmin(
+		this.props.actions.longrichAccount.getLongrichAccounts(
 			state.filterSearch,
-			longrichAccounts.offset
+			reset,
+			true
 		);
 	}
 
-	toggleEditAccountPopup() {
-		this.state.popups[0].toggleContent();
+	loadMore(){
+		this.getAccounts();
 	}
 
-	loadEditAccountPopup() {
-		if (this.state.loaded) {
-			return (<Popup component={<EditAccountPopup parent={this} />} parent={this} />);
-		}
+	onFilter(){
+		var state = this.state;
+	
+		state.filterSearch.name = state.textInputs[0].state.inputValue;
+		state.filterSearch.country = state.dropdownInputs[0].state.inputValue;
+
+		this.setState(state);
+		this.getAccounts(true);
 	}
 
 	render() {
-		var main = this;
 		var countries = [];
 
 		getCountries().forEach((n) => {
@@ -79,11 +78,13 @@ class AccountsView extends Component {
 			});
 		});
 
+		const { longrichAccounts } = this.props;
+
 		return (
 			<div className="admin section__1 SB adminAccountsPage" >
 
 				<div className="admin content">
-					{this.loadEditAccountPopup()}
+					<Popup component={<EditAccountPopup />}/>
 
 					<div className="topBar">
 						<div className="topBar__title f_h1">Accounts</div>
@@ -123,29 +124,35 @@ class AccountsView extends Component {
 									type: "btn_1",
 									label: "Filter",
 									text: "",
-									action: () => {
-										var state = main.state;
-										var n = state.textInputs[0].state.inputValue;
-										var c = state.dropdownInputs[0].state.inputValue;
-										state.filterSearch.name = n != "" ? n : "0";
-										state.filterSearch.country = c != "" ? c : "0";
-										c.setState(state);
-										c.getAccounts(true);
-									}
+									action: this.onFilter
 								}} />
 						</div>
 
 					</div>
+					
+					<div className="accounts__view" ref={(ref => this.scrollParentRef = ref )}>
+					
+						<InfiniteScroll
+							pageStart={0}
+							loadMore={this.loadMore}
+							hasMore={longrichAccounts.hasMore}
+							useWindow={false}
+							getScrollParent={() => this.scrollParentRef}
+							loader={(<Loader type="line-scale" key={0} />)}
+						>
 
-					<div className="content__view">
-						{
-							this.props.longrichAccounts.accounts.map((item, i) => {
-								return <Account account={item.account} key={i} parent={this} />;
-							})
-						}
+							{
+								longrichAccounts.accounts.map((item, i) => {
+									return <Account account={item.account} key={i} parent={this} />;
+								})
+							}
+
+						</InfiniteScroll>
+
 					</div>
+					
 
-					<div className="loadBtn">
+					<div className="accounts__loadBtn">
 						<Button
 							parent={this}
 							status={0}
@@ -178,7 +185,7 @@ function mapStateToProps(state){
 function mapDispatchToProps(dispatch) {
 	return {
 		actions: {
-			longrichAccount: bindActionCreators(LongrichAccountsActions, dispatch)
+			longrichAccount: bindActionCreators(LongrichAccountsActions, dispatch),
 		}
 	};
 }

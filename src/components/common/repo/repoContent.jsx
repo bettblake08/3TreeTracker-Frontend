@@ -11,7 +11,7 @@ function RepoContent(props) {
 		<div className="repo__content SB">
 			{
 				props.repo.folders.map((item, i) => {
-					return <RepoFolder folder={item} key={i} />;
+					return <RepoFolder folder={item} key={i}/>;
 				})
 			}
 			{
@@ -29,7 +29,7 @@ RepoContent.propTypes = {
 
 function mapStateToProps(state){
 	return {
-		repo: state.repoReducer.repo
+		repo: state.repoReducer
 	};
 }
 

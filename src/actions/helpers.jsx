@@ -1,32 +1,41 @@
 import {history} from "../store/configureStore";
-import {adminLogoutSuccess} from "./AuthenticationActions";
+import {adminLogoutSuccess} from "./authenticationActions";
 import {getLoggedInUser, setLoggedInUser } from "../helper/auth";
 import AuthenticationAPI from "../api/authenticationAPI";
+import { store } from "../index";
+import * as types from "./actionTypes";
 
-export const checkIfUnauthorized = (response, dispatch, onRefresh = () => {} ) => {
+export const checkIfUnauthorized = (response, onRefresh = () => {} ) => {
 	if (response.error.status === 401) {
 		let user = getLoggedInUser();
-		user.userType === "" ? forceLogOut(dispatch) : refreshToken(user, dispatch, onRefresh);
+		user.userType === "" ? forceLogOut() : refreshToken(user, dispatch, onRefresh);
 		return true;
 	}
 
 	return false;
 };
 
-function refreshToken(user, dispatch, onRefresh) {
-	AuthenticationAPI.refreshToken().then((response) => {
+export function refreshToken(user, onRefresh) {
+	return AuthenticationAPI.refreshToken().then((response) => {
 		if (response.success){
-			user.accessToken = response.accessToken;
+			user.user.accessToken = response.accessToken;
 			setLoggedInUser(user);
-			onRefresh();
+			return onRefresh();
 		}
 		else {
-			forceLogOut(dispatch);
+			return forceLogOut();
 		}
 	});
 }
 
-function forceLogOut(dispatch){
-	dispatch(adminLogoutSuccess());
+export function forceLogOut(){
+	store.dispatch(adminLogoutSuccess());
 	history.replace("/admin/login");
+}
+
+
+export function togglePopup(popup) {
+	return (dispatch) => {
+		return dispatch({ type: types.TOGGLE_POPUP, popup });
+	}
 }

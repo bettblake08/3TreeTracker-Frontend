@@ -10,7 +10,7 @@ import initialStoreState from "./store/initialState";
 
 require("./favicon.ico");
 
-const store = configureStore(initialStoreState);
+export const store = configureStore(initialStoreState);
 
 render( 
 	<AppContainer>

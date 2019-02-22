@@ -43,14 +43,14 @@ class PlacementInput extends Component {
 	}
 
 	getPlacementSuggestions(){
-		if(this.state.name == ""){  return; }
+		if(this.state.name == "") return;
 		this.props.actions.placement.getPlacements(this.state.name);
 	}
 
 	setSelectedPlacement(){
 		let selectedPlacement = this.props.placements.selected;
-		if(selectedPlacement.id != undefined){
-			return (<Placement tag={selectedPlacement} />);
+		if(selectedPlacement.id !== undefined){
+			return (<Placement placement={selectedPlacement} />);
 		}
 	}
 
@@ -88,8 +88,10 @@ class PlacementInput extends Component {
 							return (
 								<div className="tagS f_normal f_text-capitalize"
 									key={i}
-									onClick={() => { this.props.actions.placement.selectPlacement(item);}}>
-									{item.name + " "+ item.surname + " " + item.code}
+									onClick={() => {
+										this.props.actions.placement.selectPlacement(item);
+									}}>
+									{`${item.name} ${item.surname} ${item.code}`}
 								</div>);
 						})
 					}
@@ -105,9 +107,8 @@ PlacementInput.propTypes = {
 };
 
 function mapStateToProps(state) {
-	let defaultPlacements = {suggestions:[], selected:{}};
 	return {
-		placements: state.placements == undefined ?  defaultPlacements: state.placements
+		placements: state.placementReducer.placements
 	};
 }
 

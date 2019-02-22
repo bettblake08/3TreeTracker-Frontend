@@ -36,9 +36,7 @@ class AccountRegistration extends Component {
 	}
 
 	setView(view) {
-		var state = this.state;
-		state.view = view;
-		this.setState(state);
+		this.setState({ view });
 	}
 
 	savetoPDF() {
@@ -47,9 +45,7 @@ class AccountRegistration extends Component {
 		var dropdownInputs = this.state.dropdownInputs;
 		var c = this;
 
-		var found = textInputs.concat(dateInputs, dropdownInputs).find((elem) => {
-			return elem.state.inputValue == "";
-		});
+		var found = textInputs.concat(dateInputs, dropdownInputs).find((elem) => elem.state.inputValue == "");
 
 		if (found != undefined) {
 			c.setView(1);
@@ -59,7 +55,7 @@ class AccountRegistration extends Component {
 
 		var doc = new jsPDF();
 
-		if (REGISTRATION_FORM == undefined) {
+		if (REGISTRATION_FORM === undefined) {
 			this.props.actions.errorPopup.displayErrorMessage(
 				"Failed to generate PDF version of form. Try again in a minute."
 			);
@@ -162,6 +158,12 @@ class AccountRegistration extends Component {
 
 								<h1 className="f_title">Create an account now.</h1>
 								<h2 className="f_h2">Fill in the form below to register, then download the pdf version offered after completion.</h2>
+
+								<p className="f_normal">
+									Please note:<br/><br />
+									The account, sponsor and Beneficiary details provided in this form shall not be saved.
+									They are only to facilitate the generation of the longrich application form for your convenience.
+								</p>
 								<div className="reg__text">
 									<TextInput
 										parent={this}
@@ -324,9 +326,39 @@ class AccountRegistration extends Component {
 										config={{
 											text: "",
 											floatingLabel: true,
-											label: "Bank Account",
+											label: "Bank Account Name",
 											type: "text_input_4",
-											placeholder: "Number, Name, Branch",
+											placeholder: "Name",
+											length: 60,
+											comment: "Maximum characters allowed is (60)."
+										}} />
+								</div>
+
+								<div className="reg__text">
+									<TextInput
+										parent={this}
+										status={0}
+										config={{
+											text: "",
+											floatingLabel: true,
+											label: "Bank Account Number",
+											type: "text_input_4",
+											placeholder: "Number",
+											length: 60,
+											comment: "Maximum characters allowed is (60)."
+										}} />
+								</div>
+
+								<div className="reg__text">
+									<TextInput
+										parent={this}
+										status={0}
+										config={{
+											text: "",
+											floatingLabel: true,
+											label: "Bank Account Branch",
+											type: "text_input_4",
+											placeholder: "Branch",
 											length: 60,
 											comment: "Maximum characters allowed is (60)."
 										}} />
@@ -415,7 +447,7 @@ class AccountRegistration extends Component {
 								<div className="reg__save">
 									<Button parent={this} status={0} config={{
 										label: "Register",
-										action: this.register,
+										action: this.savetoPDF,
 										type: "btn_1",
 										text: ""
 									}} />

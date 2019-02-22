@@ -4,6 +4,8 @@ import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 
 import * as RepoActions from "../../../actions/repoActions";
+import * as HelperActions from "../../../actions/helpers";
+
 import RepoDocFile from "./repoDocFile";
 import RepoImageFile from "./repoImageFile";
 
@@ -11,44 +13,45 @@ class RepoFile extends Component {
 	constructor(props) {
 		super(props);
 
-		var files = this.props.repo.files;
-		var file = this.props.file;
-
-		let fileFound = files.find((file)=>{
-			return file.id == this.props.file.id;
-		});
-
-		var fName = file.originalName;
-
-		if (fName.length > 10) {
-			fName = fName.substr(0, 10) + " ...";
-		}
+		this.repoFileByType = this.repoFileByType.bind(this);
+		this.repoFileSelect = this.repoFileSelect.bind(this);
+		this.deleteFileFromRepo = this.deleteFileFromRepo.bind(this);
+		this.checkIfSelected = this.checkIfSelected.bind(this);
+		this.toggleFileView = this.toggleFileView.bind(this);
+		this.getDisplayName = this.getDisplayName.bind(this);
 
 		this.state = {
-			displayName: fName,
-			display: fileFound == undefined ? false : true,
-			dir: this.props.repo.contentdir,
+			displayName: this.getDisplayName(),
 			selected: false,
 			toggle: false,
+			dir: props.repo.contentdir,
 			selectedClass: {
 				true: "repoFile--selected",
 				false: "repoFile"
 			}
 		};
 
-		this.repoFileByType = this.repoFileByType.bind(this);
-		this.repoFileSelect = this.repoFileSelect.bind(this);
-		this.deleteFileFromRepo = this.deleteFileFromRepo.bind(this);
-		this.checkIfSelected = this.checkIfSelected.bind(this);
-		this.toggleFileView = this.toggleFileView.bind(this);
+	}
+
+	componentDidUpdate(prevProps){
+		if(prevProps.file.id !== this.props.file.id){
+			this.setState({displayName: this.getDisplayName()});
+		}
+
+		if(prevProps.repo.selectedFiles.length !== this.props.repo.selectedFiles.length){
+			this.checkIfSelected();
+		}
+	}
+
+	getDisplayName(){
+		var fName = this.props.file.originalName;
+		if (fName.length > 10) { fName = `${fName.substr(0, 10)} ...`; }
+		return fName;
 	}
 
 	checkIfSelected() {
-		var selectedFile = this.props.repo.selectedFiles.find((file)=>{
-			return file.id == this.props.file.id;
-		});
-
-		this.setState({selected: selectedFile == undefined ? false : true});
+		var selectedFile = this.props.repo.selectedFiles.find(file => file.id == this.props.file.id);
+		this.setState({selected: selectedFile !== undefined});
 	}
 
 	toggleFileView() {
@@ -56,8 +59,7 @@ class RepoFile extends Component {
 	}
 
 	repoFileSelect() {
-		this.props.actions.repo.toggleSelectRepoFile(this.props.file.id);
-		this.checkIfSelected();
+		this.props.actions.repo.toggleSelectRepoFile(this.props.file);
 	}
 
 	repoFileByType() {
@@ -84,16 +86,20 @@ class RepoFile extends Component {
 
 	}
 
-	deleteFileFromRepo(delChoice) {
-		var repo = this.props.main;
+	deleteFileFromRepo(delChoice = false) {
+		const { actions, file } = this.props;
+		const component = this;
 
 		if (!delChoice) {
-			this.props.actions.repo.selectRepoFileInFocus(this);
-			repo.toggleDeleteFileConfirmationPopUp();
+			actions.repo.selectRepoFileInFocus(file);
+			actions.helper.togglePopup("deleteFileConfirmationPopup");
+			this.toggleFileView();
 			return;
 		}
 
-		this.props.actions.repo.deleteFileFromRepo(this.props.file.id, delChoice);
+		actions.repo.deleteFileFromRepo(file.id, delChoice, ()=>{
+			component.toggleFileView();
+		});
 	}
 
 	render() {
@@ -106,21 +112,20 @@ class RepoFile extends Component {
 RepoFile.propTypes = {
 	actions:PropTypes.object.isRequired,
 	repo: PropTypes.object.isRequired,
-	file: PropTypes.object.isRequired,
-	index: PropTypes.object.isRequired,
-	main: PropTypes.object.isRequired
+	file: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
 	return {
-		repo: state.repoReducer.repo
+		repo: state.repoReducer
 	};
 }
 
 function mapDispatchToProps(dispatch){
 	return {
 		actions:{
-			repo: bindActionCreators(RepoActions, dispatch)
+			repo: bindActionCreators(RepoActions, dispatch),
+			helper: bindActionCreators(HelperActions, dispatch)
 		}
 	};
 }

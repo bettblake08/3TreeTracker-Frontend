@@ -2,10 +2,24 @@ import webpack from "webpack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import path from "path";
+import fs from "fs";
+
+const basePath = `${path.join(__dirname)}/.env`;
+const envPath = `${basePath}.${process.env.ENVIRONMENT}`;
+
+// Check if the file exists, otherwise fall back to the production .env
+const finalPath = fs.existsSync(envPath) ? envPath : basePath;
+
+const ENV = dotenv.config({ path: finalPath }).parsed;
+
+const ENV_KEYS = Object.keys(ENV).reduce((prev, next) => {
+	prev[`process.env.${next}`] = JSON.stringify(env[next]);
+	return prev;
+}, {});
 
 const GLOBALS = {
 	"process.env.NODE_ENV": JSON.stringify("production"),
-	__DEV__: false
+	__DEV__: false,
 };
 
 export default {
@@ -22,7 +36,7 @@ export default {
 		filename: "[name].[contenthash].js"
 	},
 	plugins: [
-		new webpack.DefinePlugin(GLOBALS),
+		new webpack.DefinePlugin({ ...GLOBALS, ...ENV_KEYS}),
 		new MiniCssExtractPlugin({
 			filename: "[name].[contenthash].css"
 		}),

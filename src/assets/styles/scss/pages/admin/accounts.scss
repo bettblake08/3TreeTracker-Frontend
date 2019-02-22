@@ -36,18 +36,17 @@
         }
     }
 
-    .content {
+    .accounts {
         &__view {
             min-height: 60vh;
             float: left;
             width: 100%;
+            .loader {
+                margin: 5rem 0 5rem 50%;
+                transform: translateX(-50%);
+                float: left;
+            }
         }
-    }
-
-    .loadBtn {
-        margin-top: 2rem;
-        float: left;
-        width: 100%;
     }
 
     .popUp__content {
@@ -62,7 +61,7 @@
         height: auto;
         box-shadow: $box-shadow-light;
         display: grid;
-        grid-template-columns: [title] 20% [gender] 5% [nation] 5% [email] 20% [phoneNo] 10% [code] 5% [placement] 20% [verified] 5% [buttons] 10%;
+        grid-template-columns: [title] 20% [gender] 5% [nation] 5% [email] 20% [phoneNo] 10% [code] 10% [placement] 15% [verified] 5% [buttons] 10%;
         grid-template-rows: auto;
 
         &__title,
@@ -141,7 +140,18 @@
         }
     }
 
-    .reg {
+    .editPP {
+        width: 100%;
+        padding: 5% 10%;
+        position: relative;
+        float: left;
+
+        &__content {
+            float: left;
+            width: 100%;
+            margin: 3rem 0;
+        }
+
         &__form {
             position: relative;
             width: 100%;
@@ -171,24 +181,11 @@
                 margin-bottom: 1rem;
             }
         }
-    }
-
-    .editPP {
-        width: 100%;
-        padding: 5% 10%;
-        position: relative;
-        float: left;
-
-        &__content {
-            float: left;
-            width: 100%;
-            margin: 3rem 0;
-        }
 
         &__buttons {
             width: 38rem;
             float: left;
-            margin: 2rem 2rem;
+            margin: 2rem 0;
 
             &__button {
                 width: 15rem;

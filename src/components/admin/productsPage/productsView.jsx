@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
+import InfiniteScroll from "react-infinite-scroller";
+import Loader from "react-loaders";
 
 import * as ProductActions from "../../../actions/productActions";
-import Button from "../../UI/button";
 import ButtonWithIcon from "../../UI/buttonWithIcon";
 import Product from "./product";
 
@@ -14,31 +15,37 @@ class ProductsView extends Component {
 		super(props);
 
 		this.state = {
-			content: [],
-			offset: 0,
 			buttons: []
 		};
 
 		this.getProducts = this.getProducts.bind(this);
+		this.loadMore = this.loadMore.bind(this);
 	}
 
 	componentDidMount() {
-		this.getProducts();
+		this.getProducts(true);
 	}
 
 	getProducts(reset = false) {
-		this.props.actions.product.getProductsAsAdmin(reset, this.props.products.offset);
+		const { actions } = this.props;
+		actions.product.getProducts(reset, true);
+	}
+
+	loadMore(){
+		this.getProducts();
 	}
 
 	render() {
 		var c = this;
+		var { products, parent } = this.props;
+
 		return (
 			<div className="admin content">
-				<div className="topBar row">
-					<div className="topBar__title f_h1 f_text-left f_text-capitalize">Products</div>
-					<div className="topBar__right">
+				<div className="ad__products__topBar row">
+					<div className="ad__products__topBar__title f_h1 f_text-left f_text-capitalize">Products</div>
+					<div className="ad__products__topBar__right">
 
-						<div className="topBar__right__add">
+						<div className="ad__products__topBar__right__add">
 							<ButtonWithIcon
 								parent={this}
 								status={0}
@@ -48,34 +55,31 @@ class ProductsView extends Component {
 									text: "",
 									icon: "add-2",
 									action: () => {
-										c.props.parent.setView(2);
+										parent.setView(2);
 									}
 								}} />
 						</div>
 
 					</div>
 				</div>
-
-				<div className="content__view">
-					{
-						this.state.content.map((item, i) => {
-							return <Product post={item} key={i} parent={this} />;
-						})
-					}
-				</div>
-
-				<div className="loadBtn">
-					<Button
-						parent={this}
-						status={0}
-						config={{
-							type: "btn_1",
-							label: "More",
-							text: "",
-							action: () => {
-								c.getProducts();
+				
+				<div className="ad__products__view" ref={(ref) => { parent.scrollParentRef = ref; }}>
+					<InfiniteScroll
+						pageStart={0}
+						loadMore={this.loadMore}
+						hasMore={products.hasMore}
+						useWindow={false}
+						getScrollParent={() => this.scrollParentRef}
+						loader={(<Loader type="line-scale" key={0} />)}
+					>
+						<div className="ad__products__grid" >
+							{
+								products.content.map((item, i) => {
+									return <Product product={item} key={i} parent={this} />;
+								})
 							}
-						}} />
+						</div>
+					</InfiniteScroll>
 				</div>
 			</div>
 		);
@@ -84,15 +88,13 @@ class ProductsView extends Component {
 
 ProductsView.propTypes = {
 	actions: PropTypes.object.isRequired,
-	products: PropTypes.object.isRequired
+	products: PropTypes.object.isRequired,
+	parent: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
 	return {
-		products: {
-			content: state.productReducer.products.content,
-			offset: state.productReducer.products.offset
-		}
+		products: state.productReducer.products
 	};
 }
 

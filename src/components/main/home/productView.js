@@ -16,9 +16,7 @@ class Products extends Component {
 	}
 
 	setView(option) {
-		var state = this.state;
-		state.view = option;
-		this.setState(state);
+		this.setState({view: option});
 	}
 
 

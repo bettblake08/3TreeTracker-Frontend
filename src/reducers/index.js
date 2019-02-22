@@ -8,6 +8,8 @@ import loginAuthReducer from "./loginAuthReducer";
 import errorPopupReducer from "./errorPopupReducer";
 import repoReducer from "./repoReducer";
 import longrichAccountsReducer from "./longrichAccountsReducer";
+import tagReducer from "./tagReducer";
+import popupReducer from "./popupReducer";
 
 export default combineReducers({
 	productReducer,
@@ -16,5 +18,7 @@ export default combineReducers({
 	loginAuthReducer,
 	errorPopupReducer,
 	repoReducer,
-	longrichAccountsReducer
+	longrichAccountsReducer,
+	tagReducer,
+	popupReducer
 });

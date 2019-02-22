@@ -1,0 +1,145 @@
+@import '../../../abstracts/variables';
+@import '../../../abstracts/mixins';
+
+.infoView {
+    overflow: scroll;
+    overflow-x: hidden;
+    height: 90vh;
+    width: 100%;
+    margin-top: 10vh;
+
+    &__content {
+        float: left;
+    }
+
+    &__1 {
+        float: left;
+        width: 100%;
+        padding: 5rem 20%;
+
+        &__title {
+            width: 100%;
+            margin-bottom: 3rem;
+            color: $color-edulink-primary;
+        }
+
+        &__text {
+            width: 100%;
+            color: $color-grey-dark;
+        }
+
+        &__image {
+            object-fit: cover;
+            object-position: center;
+            width: 50%;
+            height: 25rem;
+            transform: translateX(-50%);
+            float: left;
+            margin: 3rem 0 0 50%;
+
+            img {
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+
+    &__2 {
+        float: left;
+        width: 100%;
+        padding: 5rem 20%;
+        display: grid;
+        grid-template-columns: 2fr 2fr 2fr;
+        grid-template-rows: auto;
+    }
+
+    &__3 {
+        float: left;
+        width: 100%;
+        padding: 5rem 0;
+        background: radial-gradient(circle at center, $color-edulink-secondary, $color-edulink-primary);
+
+        &__title {
+            width: 100%;
+            margin-bottom: 1rem;
+            color: $color-primary-white;
+        }
+
+        &__buttons {
+            margin: 1rem 0 0 50%;
+            transform: translatex(-50%);
+            float: left;
+        }
+
+        &__button {
+            margin: 0 2rem;
+            width: 20rem;
+            float: left;
+        }
+    }
+}
+
+.infoBox {
+    padding: 4rem;
+    float: left;
+    grid-column: span 1;
+    grid-row: span 1;
+
+    @include respond(tab-land) {
+        padding: 4rem 2rem;
+    }
+
+    @include respond(phone) {
+        padding: 4rem 0;
+    }
+
+    &__icon {
+        width: 8rem;
+        height: 8rem;
+        margin-left: 50%;
+        transform: translateX(-50%);
+        float: left;
+
+        .icon {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    &__title {
+        margin: 2rem 0 3rem 50%;
+        transform: translateX(-50%);
+        color: $color-primary-white;
+        float: left;
+        clear: both;
+        background: linear-gradient(90deg, $color-edulink-primary, $color-edulink-secondary);
+        padding: 1rem 3rem;
+    }
+
+    &__text {
+        width: 100%;
+        color: $color-grey-dark;
+        float: left;
+        margin: 2rem 0;
+    }
+
+    &__list {
+        float: left;
+        width: 100%;
+        color: $color-grey-dark;
+
+        li {
+            padding: .5rem 0;
+        }
+    }
+
+    &__price {
+        float: left;
+        color: $color-grey-dark;
+        width: 100%;
+
+        strong {
+            color: $color-success-primary;
+        }
+    }
+}

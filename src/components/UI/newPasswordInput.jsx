@@ -1,7 +1,14 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
 
 class NewPasswordInput extends Component {
+	static propTypes = {
+		regex: PropTypes.object,
+		config: PropTypes.object.isRequired,
+		parent: PropTypes.object.isRequired
+	}
+	
 	constructor(props) {
 		super(props);
 		this.state = { 
@@ -23,8 +30,7 @@ class NewPasswordInput extends Component {
 	checkPasswords(){
 		var state = this.state;
 		var c = this;
-		state.lastTyped = Date.now();
-		this.setState(state);
+		this.setState({ lastTyped: Date.now()});
 
 		setTimeout(() => {
 			if ((Date.now() - c.state.lastTyped) >= 1000) {
@@ -84,6 +90,18 @@ class NewPasswordInput extends Component {
 
 
 class PasswordInput extends Component {
+
+	static propTypes = {
+		config: PropTypes.object.isRequired,
+		status: PropTypes.object.isRequired,
+		parent: PropTypes.object.isRequired,
+		index: PropTypes.object
+	}
+
+	static defaultProps = {
+		index: 0
+	}
+
 	constructor(props) {
 		/* 
         <PasswordInput
@@ -109,6 +127,8 @@ class PasswordInput extends Component {
 			action: config.action == undefined ? ()=>{} : config.action
 		};
 
+		this.inputRef = React.createRef();
+
 		this.handleValueChange = this.handleValueChange.bind(this);
 		this.focus = this.focus.bind(this);
 		this.setFloatingLabel = this.setFloatingLabel.bind(this);
@@ -133,9 +153,7 @@ class PasswordInput extends Component {
 	}
 
 	setStatus(status){
-		var state = this.state;
-		state.status = status;
-		this.setState(state);
+		this.setState({status});
 	}
 
 	handleValueChange(e){
@@ -146,7 +164,7 @@ class PasswordInput extends Component {
 	}
 
 	focus() {
-		ReactDOM.findDOMNode(this.refs.passwordInput).focus();
+		this.inputRef.focus();
 	}
 
 	setFloatingLabel() {
@@ -168,20 +186,20 @@ class PasswordInput extends Component {
 		case 1:
 		case 5: { 
 			status = "fail"; 
-			error = this.state.errorText != "" ? true : null; 
+			error = this.state.errorText !== ""; 
 			break; 
 		}
 		case 2:
 		case 6: { 
 			status = "success"; 
-			error = this.state.errorText != "" ? true : null;
+			error = this.state.errorText !== "";
 			break; 
 		}
 		case 3: { status = "loading"; break; }
 		case 4: { status = "warning"; break; }
 		}
 
-		var config = this.props.config;
+		const { index, config } = this.props; 
 		var errorClass = `f_comment_1 ${config.class}__error--`;
 		var commentClass = `f_comment_1 ${config.class}__comment--`;
 
@@ -189,15 +207,13 @@ class PasswordInput extends Component {
 			config.floatingLabel != undefined && config.floatingLabel ? "f_input_1 has-float-label" : ""
 		}`;
 
-		var index = this.props.index == undefined ? 0 : this.props.index;
-
 		return (
 			<div className={mainClass} >
 				<div className={`${config.class}__label f_label_1`}>{config.label}</div>
 
 				<input 
 					id={`password-${index}`}
-					ref="passwordInput" 
+					ref={(ref)=> this.inputRef = ref } 
 					type="password" 
 					className="f_input_1" 
 					value={this.state.inputValue} 
@@ -207,11 +223,11 @@ class PasswordInput extends Component {
 
 				{this.setFloatingLabel()}
 
-				<div className={error ? `${commentClass}disabled` : `${commentClass}active`}>
+				<div className={`${commentClass}${error ? "disabled" : "active" }`}>
 					{config.comment}
 				</div>
 
-				<div className={error ? `${errorClass}active` : `${errorClass}disabled`}>
+				<div className={`${errorClass}${!error ? "disabled" : "active"}`}>
 					{this.state.errorText}
 				</div>
 

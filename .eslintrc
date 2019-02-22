@@ -1,9 +1,9 @@
 {
     "root": true,
     "extends": [
-        "eslint:recommended",
-        "plugin:import/errors",
-        "plugin:import/warnings",
+        // "eslint:recommended",
+        // "plugin:import/errors",
+        // "plugin:import/warnings",
         "plugin:react/recommended"
     ],
     "plugins": [
@@ -26,9 +26,9 @@
         "jest": true
     },
     "globals": {},
-    "rules": {
-        "import/no-unresolved": [2, {
-            "caseSensitive": false
-        }]
-    }
+    // "rules": {
+    //     "import/no-unresolved": [2, {
+    //         "caseSensitive": false
+    //     }]
+    // }
 }

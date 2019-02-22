@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 
 class RepoDocFile extends Component {
 	render() {
-		var file = this.props.repoFile.props.file;
-		var fileId = this.props.repoFile.props.index;
-		var state = this.props.repoFile.state;
+		const { repoFile } = this.props;
+		const { selected, selectedClass } = repoFile.state;
+		var file = repoFile.props.file;
 		var icon = "";
 
 		switch (file.type) {
@@ -26,19 +26,24 @@ class RepoDocFile extends Component {
 		}
 
 		return (
-			<div className={state.selected? state.selectedClass.true : state.selectedClass.false}
-				id={"fl-" + fileId}>
+			<div className={selected ? selectedClass.true : selectedClass.false}
+				id={`fl-${file.id}`}>
 
-				<div className="repoFile__front" onClick={() => { this.props.repoFile.repoFileSelect(); }}>
+				<div className="repoFile__front"
+					onClick={repoFile.repoFileSelect}
+				>
 					<div className="repoFile__preview">
 						<svg className="repoFile__icon icon">
-							<use xlinkHref={"#" + icon} />
+							<use xlinkHref={`#${icon}`} />
 						</svg>
 					</div>
+
 					<div className="repoFile__front__bottom">
 						<div className="repoFile__name f_normal">{state.displayName}</div>
 						<div className="repoFile__menuBtn" >
-							<div className="iconBtn--white" onClick={() => { this.props.repoFile.toggleFileView(); }}>
+							<div className="iconBtn--white"
+								onClick={repoFile.toggleFileView}
+							>
 								<svg className="icon">
 									<use xlinkHref="#back" />
 								</svg>
@@ -51,7 +56,10 @@ class RepoDocFile extends Component {
 					<div className="repoFile__menu">
 
 						<div className="repoFile__menu__option ">
-							<a href={`${this.props.repoFile.state.dir}/${file.name}.${file.type}`} target="_blank" rel="noopener noreferrer">
+							<a href={`${this.props.repoFile.state.dir}/${file.name}.${file.type}`}
+								target="_blank"
+								rel="noopener noreferrer"
+							>
 								<div className="iconBtn">
 									<svg className="icon">
 										<use xlinkHref="#view" />
@@ -62,7 +70,8 @@ class RepoDocFile extends Component {
 
 						<div className="repoFile__menu__option--delete ">
 
-							<div className="iconBtn--danger" onClick={() => { this.props.repoFile.deleteFileFromRepo(false); }}>
+							<div className="iconBtn--danger"
+								onClick={() => { this.props.repoFile.deleteFileFromRepo(false); }}>
 								<svg className="icon">
 									<use xlinkHref="#trash" />
 								</svg>
@@ -74,7 +83,8 @@ class RepoDocFile extends Component {
 					<div className="repoFile__back__bottom" >
 						<div className="repoFile__back__bottom__box" ></div>
 						<div className="repoFile__menuBtn icon_return">
-							<div className="iconBtn--normal" onClick={() => { this.props.repoFile.toggleFileView(); }}>
+							<div className="iconBtn--normal"
+								onClick={repoFile.toggleFileView}>
 								<svg className="icon">
 									<use xlinkHref="#back" />
 								</svg>

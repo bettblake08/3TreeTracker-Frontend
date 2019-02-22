@@ -91,7 +91,7 @@ RepoCreateFolder.propTypes = {
 
 function mapStateToProps(state){
 	return {
-		repo: state.repoReducer.repo
+		repo: state.repoReducer
 	};
 }
 

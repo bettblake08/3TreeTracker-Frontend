@@ -15,3 +15,6 @@
 @import "components/tagInput";
 @import "../../../../plugins/slick-carousel/slick";
 @import "../../../../plugins/slick-carousel/slick-theme";
+
+$primary-color: $color-edulink-primary;
+@import 'loaders.css/src/animations/line-scale.scss';

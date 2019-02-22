@@ -1,14 +1,17 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import moment from "moment";
-import axios from "axios";
 import StickyBox from "react-sticky-content";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
 
-import {WEB_URL, API_URL, DEFAULT_PRODUCT_COVER_PIC} from "../../../abstract/variables";
-import CommentingSystem from "../../common/commentSystem";
-import ErrorPopup from "../../UI/errorPopup";
+import {WEB_URL, DEFAULT_PRODUCT_COVER_PIC} from "../../../abstract/variables";
+// import CommentingSystem from "../../common/commentSystem";
 import ButtonWithIcon from "../../UI/buttonWithIcon";
+
+import * as ProductActions from "../../../actions/productActions";
+import { getHumanizedTime } from "../../../helper/time";
+import Loader from "react-loaders";
 
 class ViewProduct extends Component {
 	constructor(props){
@@ -22,138 +25,54 @@ class ViewProduct extends Component {
 				likes:0,
 				dislikes:0
 			},
-			errorPopup:{},
 			buttons:[],
 			product:{
 				id: this.props.productId,
 				data:{},
-			},
-			commentingSystem:{},
-			ajax:{
-				retrieveProfileData:{
-					attempts:0,
-				},
-				getProduct: {
-					attempts: 0
-				}
 			}
 		};
 
-		this.reloadAjaxRequest = this.reloadAjaxRequest.bind(this);
 		this.setCoverPhoto = this.setCoverPhoto.bind(this);
 		this.reactToProduct = this.reactToProduct.bind(this);
 		this.getProduct = this.getProduct.bind(this);
 		this.checkReaction = this.checkReaction.bind(this);
+		this.updateReactionStats = this.updateReactionStats.bind(this);
 	}
 
 	componentDidMount() {
-		var state = this.props.parent.state;
-		state.viewProduct = this;
-		this.props.parent.setState(state);
-	}
-
-	reloadAjaxRequest(option) {
-		var state = this.state;
-
-		switch(option){
-		case 1:{
-
-			if (state.ajax.retrieveProfileData.attempts < 10) {
-				state.ajax.retrieveProfileData.attempts += 1;
-				this.setState(state);
-				this.retrieveProfileData();
-			}
-			else {
-				state.errorPopup.displayError("Access to server failed. Try again Later! ");
-				state.ajax.retrieveProfileData.attempts = 0;
-				this.setState(state);
-			}
-			break;
-		}
-		case 2: {
-
-			if (state.ajax.getProduct.attempts < 10) {
-				state.ajax.getProduct.attempts += 1;
-				this.setState(state);
-				this.getProduct();
-			}
-			else {
-				state.errorPopup.displayError("Access to server failed. Try again Later! ");
-				state.ajax.getProduct.attempts = 0;
-				this.setState(state);
-			}
-			break;
-		}
-		}
-
+		this.props.parent.setState({ viewProduct: this});
 	}
 
 	setCoverPhoto(){
-		var state = this.state;
-		var product = state.product.data.post;
-		state.coverPhotoUrl = product.image != undefined ? WEB_URL + "repo/" + product.image.name + "." + product.image.type : DEFAULT_PRODUCT_COVER_PIC;
-		this.setState(state);
+		var product = this.props.productsState.product.content.post;
+		let coverImage = `${WEB_URL}repo/${product.image.name}.${product.image.type}`;
+		this.setState({ coverPhotoUrl: product.image !== undefined ? coverImage : DEFAULT_PRODUCT_COVER_PIC});
 	}
 
 	getProduct() {
-		var component = this;
-		var state = this.state;
-
-		if(state.commentingSystem.state != undefined ){
-			state.commentingSystem.clearComments();
-		}
-
-		axios({
-			url: API_URL + "getProduct/" + state.product.id,
-			method:"GET"
-		}).then((response) => {
-            
-			if(response.status == 200){
-				var data = response.data;
-				state.product.data = data.content;
-				state.likes = data.content.likes == undefined ? 0 : data.content.likes.length;
-				component.setState(state);
-
-				if (state.commentingSystem.state != undefined) {
-					state.commentingSystem.getComments();
-				}
-
-				setTimeout(() => {
-					component.setCoverPhoto();
-				}, 1000);
+		this.props.actions.product.getProduct(
+			this.state.product.id,
+			() => {
+				this.setCoverPhoto();
 			}
-
-		}).catch((response)=>{
-			if(response.status != 200){
-				component.reloadAjaxRequest(3);
-			}
-		});
-
+		);
 	}
 
 	reactToProduct(reaction = 1) {
-		var component = this;
-		var state = component.state;
-		var url = API_URL + "productReaction/" + this.state.product.data.post.id + "/" ;
-		url+= state.reaction == reaction ? 0 : reaction;
+		this.props.actions.product.reactToProduct(
+			reaction,
+			() => {
+				this.updateReactionStats(reaction);
+				this.checkReaction();
+			});
+	}
 
-		axios({
-			url:url,
-			method:"GET"
-		}).then((response)=>{
-            
-			if (response.status == 200){
-				var ind = state.product.stats.findIndex((item) => {
-					return item.user == state.userId;
-				});
+	updateReactionStats(reaction){
+		let state = this.state;
 
-				if (ind < 0) {
-					state.product.stats[ind].reaction = state.reaction == reaction ? 0 : reaction;
-				}
-
-				switch (state.reaction) {
-				case 0: {
-					switch (reaction) {
+		switch (state.reaction) {
+			case 0: {
+				switch (reaction) {
 					case 1: {
 						state.stats.likes++;
 						break;
@@ -162,58 +81,40 @@ class ViewProduct extends Component {
 						state.stats.dislikes++;
 						break;
 					}
-					}
-					break;
 				}
-				case 1: {
-					switch (reaction) {
+				break;
+			}
+			case 1: {
+				switch (reaction) {
 					case 2: {
 						state.stats.likes--;
 						state.stats.dislikes++;
 						break;
 					}
-					}
-					break;
 				}
-				case 2: {
-					switch (reaction) {
+				break;
+			}
+			case 2: {
+				switch (reaction) {
 					case 1: {
 						state.stats.dislikes--;
 						state.stats.likes++;
 						break;
 					}
-					}
-					break;
 				}
-				}
-
-				component.setState(state);
-				component.checkReaction();
-			}
-
-		}).catch((response) => {
-			switch(response.status){
-			case 404:{
-				component.state.errorPopup.displayError("Product not found. Please try again later!");
 				break;
 			}
-			default:{
-				component.state.errorPopup.displayError("Error accessing server. Please try again later!");
-				break;
-			}
-			}
+			default: return;
+		}
 
-		});
+		this.setState(state);
 	}
 
-
 	checkReaction() {
-		var product = this.state.product.data.post;
+		var product = this.props.productsState.product.content.data.post;
 		var state = this.state;
 
-		var reaction = product.stats.find((item) => {
-			return item.user == state.userId;
-		});
+		var reaction = product.stats.find(item => item.user == state.userId);
 
 		state.reaction = reaction == undefined ? 0 : reaction.reaction;
 
@@ -226,8 +127,10 @@ class ViewProduct extends Component {
 	}
 
 	render() {
-		var product = this.state.product.data.post;
-		if (product == undefined) { return <div></div>; }
+		let { parent, productsState } = this.props;
+
+		var product = productsState.product.content;
+		if (product.post === undefined) { return <div />; }
 
 		var coverImage = {
 			backgroundImage: `url('${this.state.coverPhotoUrl}')`,
@@ -235,15 +138,10 @@ class ViewProduct extends Component {
 			backgroundPosition:"center"
 		};
 
-		var parent = this.props.parent;
-
-		var time = moment(this.state.product.data.log.created_at,"YYYY-MM-DD HH:mm:ss").utc(3).local();
-		var ctime = moment.duration(time.diff(moment()),"milliseconds").humanize();
+		let { reaction, stat } = this.state;
 
 		return (
 			<div className="vP">
-				<ErrorPopup parent={this} />
-
 				<div className="pageTop">
 					<div className="pageTop__background" style={coverImage}></div>
 					<div className="pageTop__foreground"></div>
@@ -256,119 +154,125 @@ class ViewProduct extends Component {
 					</StickyBox>
                     
 					<StickyBox >
-						<div className="section__2">
-							<div className="navigation">
-								<div className="navigation__home">
-									<ButtonWithIcon
-										parent={this}
-										status={0}
-										config={{
-											class: "btnIcon_1",
-											action: () => { 
-												parent.setView(1);
-											},
-											label: "Back",
-											icon: "back"
-										}}
-									/>
-								</div>
 
-
-
-								<div className="navigation__stat">
-									<div className="navigation__stat__view">
-										<div className="navigation__stat__icon">
-											<div className="iconBtn--normal">
-												<svg className="icon">
-													<use xlinkHref="#view" />
-												</svg>
-											</div>
-										</div>
-										<div className="navigation__stat__value f_h2 f_text-bold">{product.stat.views}</div>
-									</div>
-
-									<div className="navigation__stat__likes">
-										<div className="navigation__stat__icon">
-											<div className="iconBtn--normal">
-												<svg className="icon">
-													<use xlinkHref="#like" />
-												</svg>
-											</div>
-										</div>
-										<div className="navigation__stat__value f_h2 f_text-bold">{this.state.likes}</div>
-									</div>
-
-									<div className="navigation__stat__com">
-										<div className="navigation__stat__icon">
-											<div className="iconBtn--normal">
-												<svg className="icon">
-													<use xlinkHref="#communication" />
-												</svg>
-											</div>
-										</div>
-										<div className="navigation__stat__value f_h2 f_text-bold">{product.stat.comments}</div>
-									</div>
-
-								</div>
-
-								<div className="navigation__buttons">
-									<div className="navigation__buttons__button">
+						{
+							productsState.productIsLoading
+							? <Loader type="line-scale" key={0} />
+							: <div className="section__2">
+								<div className="navigation">
+									<div className="navigation__home">
 										<ButtonWithIcon
 											parent={this}
-											status={ this.state.reaction == 2 ? 5 : 0}
+											status={0}
 											config={{
-												class: "btnIcon_2",
-												action: () => { this.reactToProduct(2);},
-												label: this.state.reaction == 2 ? "Disliked" : "Dislike",
-												icon: "dislike"
+												class: "btnIcon_1",
+												action: () => {
+													parent.setView(1);
+												},
+												label: "Back",
+												icon: "back"
 											}}
 										/>
 									</div>
-									<div className="navigation__buttons__button">
-										<ButtonWithIcon 
-											parent={this}
-											status={this.state.reaction == 1 ? 6 : 0}
-											config={{
-												class:"btnIcon_2",
-												action: () => { this.reactToProduct(1); },
-												label: this.state.reaction == 1 ? "Liked" : "Like",
-												icon:"like"
-											}}
-										/>
+
+
+
+									<div className="navigation__stat">
+										<div className="navigation__stat__view">
+											<div className="navigation__stat__icon">
+												<div className="iconBtn--normal">
+													<svg className="icon">
+														<use xlinkHref="#view" />
+													</svg>
+												</div>
+											</div>
+											<div className="navigation__stat__value f_h2 f_text-bold">{product.post.stat.views}</div>
+										</div>
+
+										<div className="navigation__stat__likes">
+											<div className="navigation__stat__icon">
+												<div className="iconBtn--normal">
+													<svg className="icon">
+														<use xlinkHref="#like" />
+													</svg>
+												</div>
+											</div>
+											<div className="navigation__stat__value f_h2 f_text-bold">{stat.likes}</div>
+										</div>
+
+										{/* <div className="navigation__stat__com">
+									<div className="navigation__stat__icon">
+										<div className="iconBtn--normal">
+											<svg className="icon">
+												<use xlinkHref="#communication" />
+											</svg>
+										</div>
 									</div>
+									<div className="navigation__stat__value f_h2 f_text-bold">{product.stat.comments}</div>
+								</div> */}
+
+									</div>
+
+									<div className="navigation__buttons">
+										<div className="navigation__buttons__button">
+											<ButtonWithIcon
+												parent={this}
+												status={reaction == 2 ? 5 : 0}
+												config={{
+													class: "btnIcon_2",
+													action: () => { this.reactToProduct(2); },
+													label: reaction == 2 ? "Disliked" : "Dislike",
+													icon: "dislike"
+												}}
+											/>
+										</div>
+										<div className="navigation__buttons__button">
+											<ButtonWithIcon
+												parent={this}
+												status={reaction == 1 ? 6 : 0}
+												config={{
+													class: "btnIcon_2",
+													action: () => { this.reactToProduct(1); },
+													label: reaction == 1 ? "Liked" : "Like",
+													icon: "like"
+												}}
+											/>
+										</div>
+									</div>
+
+								</div>
+
+								<div className="product">
+									<div className="product__content">
+										<div className="product__primary">
+
+											<div className="product__title f_title f_text-capitalize">{product.post.title}</div>
+											<div className="product__time f_normal">{getHumanizedTime(product.log.created_at)}</div>
+
+										</div>
+										<div className="product__tags">
+											{
+												product.post.tags.map((item, i) => {
+													return (<div className="product__tag f_normal" key={i}>{item.name}</div>);
+												})
+											}
+										</div>
+
+										<div className="product__text">
+											<div className="ck--1" dangerouslySetInnerHTML={{ __html: product.post.body }}></div>
+										</div>
+
+									</div>
+
+									{/* <div className="product__commentSection">
+								<CommentingSystem commentingOn={1} product={this.state.product.data} parent={this}/>
+							</div>  */}
+
 								</div>
 
 							</div>
-
-							<div className="product">
-								<div className="product__content">
-									<div className="product__primary">
-
-										<div className="product__title f_title f_text-capitalize">{product.title}</div>
-										<div className="product__time f_normal">{ctime + " ago"}</div>
-
-									</div>
-									<div className="product__tags">
-										{
-											product.tags.map((item, i) => {
-												return (<div className="product__tag f_normal" key={i}>{item.name}</div>);
-											})
-										}
-									</div>
-
-									<div className="product__text">
-										<div className="ck--1" dangerouslySetInnerHTML={{ __html: product.body }}></div>
-									</div>
-
-								</div>
-
-								<div className="product__commentSection">
-									<CommentingSystem commentingOn={1} product={this.state.product.data} parent={this}/>
-								</div> 
-
-							</div>
-
-						</div>
+						}
+						
 
 					</StickyBox>
 
@@ -386,7 +290,19 @@ class ViewProduct extends Component {
 
 ViewProduct.propTypes = {
 	productId: PropTypes.number,
-	parent:PropTypes.object.isRequired
+	parent:PropTypes.object.isRequired,
+	productsState: PropTypes.object.isRequired,
+	actions: PropTypes.object.isRequired
 };
 
-export default ViewProduct;
+const mapStateToProps = (state) => ({
+	productsState: state.productReducer
+});
+
+const mapDispatchToProps = (dispatch) => ({
+	actions: {
+		product: bindActionCreators(ProductActions, dispatch)
+	}
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(ViewProduct);

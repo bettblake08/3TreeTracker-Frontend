@@ -1,9 +1,11 @@
 import axios from "axios";
 
-export const MOCK = process.env.API_MOCK;
+import { forceLogOut, refreshToken} from '../actions/helpers';
+import { getLoggedInUser } from "../helper/auth.js";
+export const MOCK = process.env.REACT_APP_API_MOCK === "true";
 export const MOCK_DELAY = 0;
 
-export default axios.create({
+const axiosUnprotected = axios.create({
 	baseURL: process.env.REACT_APP_API,
 	headers: { "Content-Type": "application/json" }
 });
@@ -13,13 +15,46 @@ export const axiosProtected = axios.create({
 	headers: { "Content-Type": "application/json" }
 });
 
-const user = JSON.parse(localStorage.getItem("user"));
 
-if (user !== null) {
-	axiosProtected.defaults.headers.common.Authorization = `Token ${user.token}`;
-} else {
-	delete axiosProtected.defaults.headers.common.Authorization;
-}
+axiosProtected.interceptors.request.use((config) => {
+	const loggedIn = getLoggedInUser();
+	if(loggedIn.userType === "") {
+		forceLogOut();
+		return config;
+	}
+
+	const token = loggedIn.user.accessToken;
+	const newConfig = config;
+	if (token !== undefined) { newConfig.headers.Authorization = `Bearer ${token}`; }
+
+	return newConfig;
+});
+
+axiosProtected.interceptors.response.use(response => response, error => {
+
+	if(error.response === undefined) return error;
+
+	if (error.response.status === 401) {
+		let user = getLoggedInUser();
+		return user.userType === "" 
+			? forceLogOut()
+			: refreshToken(
+				user,
+				() => {
+				let loggedInUser = getLoggedInUser();
+
+				if (loggedInUser.userType ===  "") return forceLogOut();
+
+				const headers = { Authorization: loggedInUser.user.access_token };
+				Object.assign(axiosProtected.defaults, headers);
+				Object.assign(error.response.config, headers);
+				return axiosProtected.request(error.response.config);
+				}
+			);
+	}
+
+	return error.response;
+});
 
 export const axiosRefresh = axios.create({
 	baseURL: process.env.REACT_APP_API,
@@ -27,8 +62,15 @@ export const axiosRefresh = axios.create({
 });
 
 
-if (user !== null) {
-	axiosRefresh.defaults.headers.common.Authorization = `Token ${user.refreshToken}`;
-} else {
-	delete axiosRefresh.defaults.headers.common.Authorization;
-}
+axiosRefresh.interceptors.request.use((config) => {
+	const loggedInUser = getLoggedInUser();
+	const refreshToken = loggedInUser.user.refreshToken;
+	const newConfig = config;
+
+	if (loggedInUser.userType !== "") {
+		newConfig.headers.Authorization = `Bearer ${refreshToken}`;
+	}
+	return newConfig;
+});
+
+export default axiosUnprotected;

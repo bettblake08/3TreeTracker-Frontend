@@ -2,23 +2,20 @@ import * as types from "./actionTypes";
 import RepoAPI from "../api/repoAPI";
 import * as ErrorPopup from "../actions/errorPopupActions";
 import * as apiCall from "./apiCallActions";
-import {checkIfUnauthorized} from "./helpers";
 
 
 export function getRepoContentSuccess(data) {
-	return (dispatch) => {
-		return dispatch({ type: types.GET_REPO_CONTENT_SUCCESS, data });
-	};
+	return { type: types.GET_REPO_CONTENT_SUCCESS, data };
 }
 
 export function getRepoContent() {
 	return (dispatch, getState) => {
-		let repo = getState().repoReducer.repo;
-		var fids = repo.cached.folderIds;
-		var folder_id = fids[fids.length - 1];
-        
-		return RepoAPI.getRepoContent(folder_id).then((response) => {
-			if (response.error == undefined) {
+		let { folderIds } = getState().repoReducer;
+
+		var folderId = folderIds[folderIds.length - 1];
+
+		return RepoAPI.getRepoContent(folderId).then((response) => {
+			if (response.success) {
 				dispatch(getRepoContentSuccess(response));
                 
 				if (repo.selectedFiles != null) {
@@ -29,16 +26,15 @@ export function getRepoContent() {
 				}
 			}
 			else {
-				if (checkIfUnauthorized(response, dispatch)) return;		
 				dispatch(apiCall.reloadAPICall("getRepoContentByFolder", 5));
 			}
 		});
 	};
 }
 
-export function loadRepoContent(data) {
+export function loadRepoContent() {
 	return (dispatch) => {
-		return dispatch({ type: types.LOAD_REPO_CONTENT, data });
+		return dispatch({ type: types.LOAD_REPO_CONTENT });
 	};
 }
 
@@ -60,25 +56,17 @@ export function setRepoSettings(data) {
 	};
 }
 
-export function createFolderinRepoSuccess(data) {
-	return (dispatch) => {
-		return dispatch({ type: types.GET_REPO_CONTENT_SUCCESS, data });
-	};
-}
-
 export function createFolderinRepo(folderName, onSuccess = () => {}, onFailure = () => {}) {
 	return (dispatch, getState) => {
-		let repo = getState().repoReducer.repo;
-		var fids = repo.loadedFolderIds;
-		var folderId = fids[fids.length - 1];
+		let { folderIds } = getState().repoReducer;
+		var folderId = folderIds[folderIds.length - 1];
 
-		return RepoAPI.getRepoContent(folderId, folderName).then((response) => {
-			if (response.error == undefined) {
-				dispatch(createFolderinRepoSuccess(response));
+		return RepoAPI.createFolderinRepo(folderId, folderName).then((response) => {
+			if (response.success) {
+				getRepoContent();
 				onSuccess();
 			}
-			else {
-				if (checkIfUnauthorized(response, dispatch)) return;				
+			else {			
 				onFailure();
 				dispatch(apiCall.reloadAPICall("createFolderinRepo", 5));
 			}
@@ -87,21 +75,18 @@ export function createFolderinRepo(folderName, onSuccess = () => {}, onFailure =
 }
 
 export function deleteFileInRepoSuccess(data) {
-	return (dispatch) => {
-		return dispatch({ type: types.GET_REPO_CONTENT_SUCCESS, data });
-	};
+	return { type: types.DELETE_REPO_FILE_SUCCESS, data };
 }
 
-export function deleteFileInRepo(fileId, delChoice, onSuccess = () => { }, onFailure = () => { }) {
+export function deleteFileInRepo(fileId, delChoice = false, onSuccess = () => { }, onFailure = () => { }) {
 	return (dispatch) => {
 
-		return RepoAPI.getRepoContent(fileId, delChoice).then((response) => {
-			if (response.error == undefined) {
-				dispatch(deleteFileInRepoSuccess(response));
+		return RepoAPI.deleteFileFromRepo(fileId, delChoice).then((response) => {
+			if (response.success) {
+				dispatch(deleteFileInRepoSuccess(fileId));
 				onSuccess();
 			}
-			else {
-				if (checkIfUnauthorized(response, dispatch)) return;				
+			else {			
 				dispatch(ErrorPopup.displayErrorMessage(response.error.message));
 				onFailure();
 			}
@@ -109,15 +94,21 @@ export function deleteFileInRepo(fileId, delChoice, onSuccess = () => { }, onFai
 	};
 }
 
-export function toggleSelectRepoFile(fileIndex) {
+export function toggleSelectRepoFile(data) {
 	return (dispatch) => {
-		return dispatch({ type: types.TOGGLE_SELECT_REPO_FILE, fileIndex });
+		return dispatch({ type: types.TOGGLE_SELECT_REPO_FILE, data });
 	};
 }
 
-export function selectRepoFileInFocus(fileComponent) {
+export function selectRepoFileInFocus(file) {
 	return (dispatch) => {
-		return dispatch({ type: types.SELECT_REPO_FILE_IN_FOCUS, fileComponent });
+		return dispatch({ type: types.SELECT_REPO_FILE_IN_FOCUS, file });
+	};
+}
+
+export function selectRepoFolderInFocus(folder) {
+	return (dispatch) => {
+		return dispatch({ type: types.SELECT_REPO_FOLDER_IN_FOCUS, folder });
 	};
 }
 
@@ -139,3 +130,22 @@ export function toggleUploadFileDisplay() {
 	};
 }
 
+export function deleteFolderInRepoSuccess(data) {
+	return { type: types.DELETE_REPO_FOLDER_SUCCESS, data };
+}
+
+export function deleteFolderInRepo(folderId, delChoice = false, onSuccess = () => { }, onFailure = () => { }) {
+	return (dispatch) => {
+
+		return RepoAPI.deleteFolderFromRepo(folderId, delChoice).then((response) => {
+			if (response.success) {
+				dispatch(deleteFolderInRepoSuccess(folderId));
+				onSuccess();
+			}
+			else {
+				dispatch(ErrorPopup.displayErrorMessage(response.error.message));
+				onFailure();
+			}
+		});
+	};
+}

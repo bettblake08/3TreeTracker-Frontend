@@ -13,31 +13,25 @@ class Popup extends Component {
 		this.toggleContent = this.toggleContent.bind(this);
 	}
 
-	componentDidMount() {
-		var state = this.props.parent.state;
-		state.popups.push(this);
-		this.props.parent.setState(state);
-	}
-
 	toggleContent() {
-		this.setState({toggleContent: this.state.toggleContent ? false : true});
+		this.setState({toggleContent: !this.state.toggleContent});
 	}
 
 	setContent() {
-		if (this.state.toggleContent) {
-			return this.props.component;
-		}
+		return React.cloneElement(
+			this.props.component, {
+				popupComponent: this
+		});
 	}
 
 	render() {
-		var style = this.props.style == undefined ? {} : this.props.style;
-		var exit = this.props.exit != undefined ? this.props.exit : false;
-        
+		const { style, exit } = this.props;
+
 		return (
-			<div className={this.state.toggleContent == false ? "popUp--disabled" : "popUp--active"}>
+			<div className={`popUp--${this.state.toggleContent ? "active" : "disabled"}`}>
 				<div className="popUp__content SB" style={style}>
 					<div className="popup__exit f_title"
-						style={{ display: exit ? "block": "none" }}
+						style={{ display: exit ? "block" : "none" }}
 						onClick={() => { this.toggleContent(); }}>&times;</div>
 					{this.setContent()}
 				</div>
@@ -47,10 +41,14 @@ class Popup extends Component {
 }
 
 Popup.propTypes = {
-	parent: PropTypes.object.isRequired,
 	component: PropTypes.object.isRequired,
 	exit: PropTypes.bool,
 	style: PropTypes.object
 };
+
+Popup.defaultProps = {
+	style: {},
+	exit: false
+}
 
 export default Popup;

@@ -7,22 +7,26 @@ export default (state = [], action) => {
 	switch (action.type) {
 	case types.SELECT_PLACEMENT: {
 		// Gets current selected placement
-		let selectedPlacement = state.placements.selected;
-
-		if (selectedPlacement.id == undefined || selectedPlacement.id == action.placement.id) {
-			return state;
+		let placements = objectAssign({}, state.placements);
+		let suggestedPlacements = objectAssign([], placements.suggestions);
+		let selected = objectAssign({}, placements.selected);
+		
+		if(placements.selected.id === action.placement.id){
+			suggestedPlacements.push(action.placement);
+			selected = {};
+		}
+		else {
+			suggestedPlacements = suggestedPlacements.filter((elem) => elem.id !== action.placement.id);
+			if(selected.id === undefined) debugger;
+			suggestedPlacements.push(selected);
+			selected = action.placement;
 		}
 
-		var index = state.placements.suggestions.findIndex((elem) => {
-			return elem.id == action.placement.id;
-		});
-        
-		// If placement exists in the suggestions, we remove it from the suggestions
-		if (index >= 0) {
-			state.placements.suggestions.splice(index, 1);
-		}
-
-		placements.selected = selectedPlacement;
+		placements = {
+			...placements,
+			selected,
+			suggestions: suggestedPlacements
+		};
 		return {...state, placements};
 	}
 	case types.GET_PLACEMENTS_SUCCESS: {

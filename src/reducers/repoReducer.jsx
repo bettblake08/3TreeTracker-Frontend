@@ -4,19 +4,12 @@ import objectAssign from "object-assign";
 export default (state = [], action) => {
 	switch (action.type) {
 	case types.GET_REPO_CONTENT_SUCCESS: {
-		let repo = objectAssign({}, state.repo);
+		let foldersLoaded = objectAssign([], state.foldersLoaded);
 		let data = action.data;
-        
-		// repoContent(data.content);
-		repo.folders = data.content.folders;
-		repo.files = data.content.files;
-		repo.stats = data.content.stats;
 
 		//This code checks if the folder has already been loaded. If so, it overwrite a loaded folder with an updated list of subFolders.
 
-		var loadedFolderIndex = repo.foldersLoaded.findIndex((folder)=>{
-			return folder.id === data.folder_id;
-		});
+		var loadedFolderIndex = foldersLoaded.findIndex(folder => folder.id === data.folder_id);
 
 		var fLoaded = {
 			id: data.folder_id,
@@ -24,121 +17,123 @@ export default (state = [], action) => {
 			subFiles: data.content.files,
 		};
 
-		if (loadedFolderIndex >= 0) {
-			repo.foldersLoaded[loadedFolderIndex] = fLoaded;
-		}
-		else {
-			repo.foldersLoaded.push(fLoaded);
-		}
+		if (loadedFolderIndex >= 0) {	foldersLoaded[loadedFolderIndex] = fLoaded;	}
+		else {	foldersLoaded.push(fLoaded);	}
 
-		return { ...state, repo };
+		return { ...state, ...data.content, foldersLoaded};
 	}
 	case types.LOAD_REPO_CONTENT: {
-		let repo = objectAssign({}, state.repo);
+		let repo = objectAssign({}, state);
 
 		//Deepest folder explored
 		var folderIds = repo.folderIds;
 		var currentFolderId = folderIds[folderIds.length - 1];
 		var preLoadedFolders = repo.foldersLoaded;
 
-		var preLoadedFolderIndex = preLoadedFolders.findIndex((folder)=>{
-			return folder.id == currentFolderId;
-		});
+		var preLoadedFolderIndex = preLoadedFolders.findIndex( folder => folder.id === currentFolderId);
 
-		if(preLoadedFolderIndex < 0){
-			return state;
-		}
+		if(preLoadedFolderIndex < 0){	return state;	}
 
-		repo.folders = preLoadedFolders[preLoadedFolderIndex].subFolders;
-		repo.files = preLoadedFolders[preLoadedFolderIndex].subFiles;
-
-		return {...state, repo};
-	}
-	case types.UPDATE_REPO_FOLDER_DIRECTORY:{
-		let repo = objectAssign({}, state.repo);
-
-		repo.folderIds.push(action.data.folder.id);
-		repo.folderDirs.push(action.data.folder.name);
-        
-		repo.currentFolder = {
-			id: action.data.folder.id,
-			name: action.data.folder.name
+		return {
+			...state,
+			folders: preLoadedFolders[preLoadedFolderIndex].subFolders,
+			files: preLoadedFolders[preLoadedFolderIndex].subFiles
 		};
+	}	
+	case types.UPDATE_REPO_FOLDER_DIRECTORY:{
+		let folderIds = objectAssign([], state.folderIds);
+		let folderDirs = objectAssign([], state.folderDirs);
+		let { folder } = action.data;
 
-		return {...state, repo};
+		folderIds.push(folder.id);
+		folderDirs.push(folder.name);
+
+		return {
+			...state,
+			folderIds,
+			folderDirs,
+			currentFolder: {
+				id: folder.id,
+				name: folder.name
+			}
+		};
 	}
 	case types.UPDATE_TO_PREV_FOLDER_DIRECTORY: {
-		let repo = objectAssign({}, state.repo);
+		let folderIds = objectAssign([], state.folderIds);
+		let folderDirs = objectAssign([], state.folderDirs);
 
-		if(repo.folderIds.length <=1) return state;
+		if(folderIds.length <= 1) return state;
 
-		repo.folderIds.pop();
-		repo.folderDirs.pop();
-        
-		repo.currentFolder.id = repo.folderIds[repo.folderIds.length-1];
-		repo.currentFolder.name = repo.folderDirs[repo.folderIds.length-1];
+		folderIds.pop();
+		folderDirs.pop();
 
-		return { ...state, repo };
+		return {
+			...state,
+			folderIds,
+			folderDirs,
+			currentFolder: {
+				id: folderIds[folderIds.length - 1],
+				name: folderDirs[folderDirs.length - 1]
+			}
+		};
 	}
 	case types.SET_REPO_SETTINGS: {
-		let repo = objectAssign({}, state.repo);
-		repo.settings = {...repo.settings, ...action.data};
-		return {...state, repo};
+		let settings = objectAssign({}, state.settings);
+		settings = {
+			...settings,
+			...action.data
+		};
+
+		return {...state, settings};
 	}
 	case types.TOGGLE_SELECT_REPO_FILE: {
-		let repo = objectAssign({}, state.repo);
-        
-		let fileIndex = repo.selectedFiles.findIndex(file => {
-			return file.id == this.props.file.id;
-		});
+		let selectedFiles = objectAssign([], state.selectedFiles);
+		let file = action.data;
+
+		let fileIndex = selectedFiles.findIndex(selectedFile => selectedFile.id === file.id);
 
 		if (fileIndex < 0) {
 			// Repo file has not been selected, so we select
-			var fileCount = repo.settings.requiredCount;
+			var fileCount = state.settings.requiredCount;
             
 			// Check if the required number of files to be selected has not been passed
-			if (fileCount == null) { return state; }
-			if (repo.selectedFiles.length >= fileCount) { return state; }
+			if (fileCount === null || selectedFiles.length >= fileCount) { return state; }
 
 			// Check is file to be selected is of the required types of files
-			var fileFound = repo.requiredTypes.forEach((type)=>{
-				return type == this.props.file.type;
-			});
+			if (state.settings.requiredTypes.find(type => type == file.type) === undefined) return state;
 
-			if (fileFound == undefined) { return state; }
-
-			repo.selectedFiles.push({
-				id: this.props.file.id,
-				file: this.props.file
+			selectedFiles.push({
+				id: file.id,
+				file: file
 			});
-            
-			return {...state, repo};
+		}
+		else {
+			// Repo file has been selected, so we deselect
+			selectedFiles.splice(fileIndex, 1);
 		}
 
-		// Repo file has been selected, so we deselect
-		repo.selectedFiles.splice(fileIndex);
-
-		return {...state, repo};
+		return {...state, selectedFiles};
 	}
 	case types.SELECT_REPO_FILE_IN_FOCUS: {
-		let repo = objectAssign({}, state.repo);
-		repo.fileInFocus = action.fileComponent;
-		return { ...state, repo };
+		return { ...state, fileInFocus: action.file };
+	}
+	case types.SELECT_REPO_FOLDER_IN_FOCUS: {
+		return { ...state, folderInFocus: action.folder };
 	}
 	case types.SET_MAIN_REPO_COMPONENT: {
-		let repo = objectAssign({}, state.repo);
-		repo.mainComponent = action.component;
-		return { ...state, repo };
+		return { ...state, mainComponent: action.component };
 	}
 	case types.TOGGLE_CREATE_REPO_FOLDER_DISPLAY: {
-		let repo = objectAssign({}, state.repo);
-		repo.createFolderDisplay = !repo.createFolderDisplay;
-		return { ...state, repo };
+		return { ...state, createFolderDisplay: !state.createFolderDisplay };
 	}
 	case types.TOGGLE_UPLOAD_FILE_DISPLAY: {
-		let repo = objectAssign({}, state.repo);
-		repo.uploadFileDisplay = !repo.uploadFileDisplay;
-		return { ...state, repo };
+		return { ...state, uploadFileDisplay: !state.uploadFileDisplay };
+	}
+	case types.DELETE_REPO_FOLDER_SUCCESS: {
+		return { ...state, folders: state.folders.filter(folder => folder.id !== action.data)};
+	}
+	case types.DELETE_REPO_FILE_SUCCESS: {
+		return { ...state, files: state.files.filter(file => file.id !== action.data) };
 	}
 	default: {
 		return state;

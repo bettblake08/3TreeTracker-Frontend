@@ -2,7 +2,6 @@ import * as types from "./actionTypes";
 import * as apiCall from "./apiCallActions";
 import * as errorPopup from "./errorPopupActions";
 import longrichAccountAPI from "../api/longrichAccountAPI";
-import {checkIfUnauthorized} from "./helpers";
 
 export function createLongrichAccountSuccess(data) {
 	return (dispatch) => {
@@ -16,37 +15,38 @@ export function createLongrichAccountError(data) {
 	};
 }
 
-export function createLongrichAccount(account) {
+export function createLongrichAccount(account, onSuccess = () => {}) {
 	return (dispatch) => {
 		return longrichAccountAPI.createAccount(account).then((response) => {
-			if (response.error == undefined) {
+			if (response.success) {
 				dispatch(createLongrichAccountSuccess(response));
+				onSuccess();
 			}
 			else {
-				dispatch(createLongrichAccountError(response));
+				dispatch(errorPopup.displayErrorMessage("Access to server failed!"));
 			}
 		});
 	};
 }
 
 export function getLongrichAccountsSuccess(data) {
-	return (dispatch) => {
-		return dispatch({ type: types.GET_LONGRICH_ACCOUNTS_SUCCESS, data });
-	};
+	return { type: types.GET_LONGRICH_ACCOUNTS_SUCCESS, data }
 }
 
-export function getLongrichAccountsAsAdmin(filter, offset) {
+
+export function getLongrichAccounts(filter, reset = false , admin = false) {
 	const mainFunction = this;
 	
-	return (dispatch) => {
+	return (dispatch, getState) => {
+		let { offset } = getState().longrichAccountsReducer; 
 
-		return longrichAccountAPI.getAccounts(filter, offset, true).then((response) => {
+		if(reset) offset = 0;
+
+		return longrichAccountAPI.getAccounts(filter, offset, true, admin).then((response) => {
 			if (response.success) {
-				dispatch(getLongrichAccountsSuccess(response));
+				dispatch(getLongrichAccountsSuccess({ ...response, reset }));
 			}
 			else {
-				checkIfUnauthorized(response, dispatch);
-				
 				if(response.error.status !== 200){
 					dispatch(apiCall.reloadAPICall(mainFunction, 5));
 					return;
@@ -55,5 +55,11 @@ export function getLongrichAccountsAsAdmin(filter, offset) {
 				dispatch(errorPopup.displayErrorMessage(response.error.message));
 			}
 		});
+	};
+}
+
+export function setAccountInFocus(account) {
+	return (dispatch) => {
+		return dispatch({ type: types.SET_LONGRICH_ACCOUNT_IN_FOCUS, data: account });
 	};
 }

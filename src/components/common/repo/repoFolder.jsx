@@ -1,83 +1,60 @@
 import React, { Component } from "react";
-import axios from "axios";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { bindActionCreators } from "redux";
+
+import * as RepoActions from "../../../actions/repoActions"
 
 class RepoFolder extends Component {
 	constructor(props) {
 		super(props);
-		var folders = this.props.main.state.folders;
-		var folder = this.props.folder;
-		var display = false;
-
-		for (var i = 0; folders[i] != null; i++) {
-			if (folders[i]._id == this.props.index) {
-				display = true;
-				break;
-			}
-		}
-
-		var fName = folder.name;
-		if (fName.length > 10) {
-			fName = fName.substr(0, 10) + " ...";
-		}
-
-		this.state = {
-			folder: folder,
-			folder_index: this.props.index,
-			displayName: fName,
-			display: display,
-			toggle: false
-		};
 
 		this.deleteFolderFromRepo = this.deleteFolderFromRepo.bind(this);
 		this.toggleFolderView = this.toggleFolderView.bind(this);
+		this.changeDirectory = this.changeDirectory.bind(this);
+		this.getDisplayName = this.getDisplayName.bind(this);
+
+		this.state = {
+			displayName: this.getDisplayName(),
+			toggle: false
+		};
+	}
+
+	componentDidUpdate(prevProps){
+		if (prevProps.folder.id !== this.props.folder.id){
+			this.setState({ displayName: this.getDisplayName() });
+		}
+	}
+
+	getDisplayName(){
+		var fName = this.props.folder.name;
+		if (fName.length > 10) { fName = `${fName.substr(0, 10)} ...`; };
+		return fName;
 	}
 
 	toggleFolderView() {
-		var state = this.state;
-		state.toggle = state.toggle ? false : true;
-		this.setState(state);
+		this.setState({toggle: !this.state.toggle});
 	}
 
-
-	/* API  */
 	deleteFolderFromRepo(delChoice = false) {
-		var repo = this.props.main;
-		var url = repo.state.url.deleteFolderFromRepo + this.state.folder.id;
-
-		axios({
-			url: url,
-			method: delChoice ? "DELETE" : "GET"
-		}).then((response) => {
-			switch (response.data.error) {
-			case 0: {
-				repo.retrieveRepoContent();
-				break;
-			}
-			case 1: {
-				repo.state.folderInFocus = this;
-				repo.toggleDeleteFolderConfirmationPopUp();
-				break;
-			}
-			}
-		});
-
+		const { actions, folder } = this.props;
+		actions.repo.deleteFolderInRepo(folder.id, delChoice);
 	}
-	/* API  */
+
+	changeDirectory() {
+		const { folder, actions } = this.props;
+		actions.repo.changeRepoFolderDirectory({ folder });
+	}
 
 	render() {
-		const inActive = {
-			display: "none"
-		};
-
-		const active = {
-			display: "block"
-		};
+		const { folder } = this.props;
+		const { toggle } = this.state;
 
 		return (
-			<div className="repoFolder" id={"fd-" + this.state.folder_index} style={this.state.display == false ? inActive : active}>
-				<div className={this.state.toggle ? "repoFolder__back" : "repoFolder__front"}>
+			<div className="repoFolder" id={`fd-${folder.id}`}>
+				<div className={`repoFolder__${toggle ? "back" : "front"}`}>
 					<div className="repoFolder__preview">
-						<svg className="repoFolder__icon icon" onClick={() => { this.props.main.changeFolderDirectory(this.state.folder.id, this.state.folder.name); }}>
+						<svg className="repoFolder__icon icon" onClick={this.changeDirectory}>
 							<use xlinkHref="#folder-1" />
 						</svg>
 					</div>
@@ -85,7 +62,7 @@ class RepoFolder extends Component {
 					<div className="repoFolder__front__bottom">
 						<div className="repoFolder__name f_normal">{this.state.displayName}</div>
 						<div className="repoFolder__menuBtn" >
-							<div className="iconBtn--white" onClick={() => { this.toggleFolderView(); }}>
+							<div className="iconBtn--white" onClick={this.toggleFolderView}>
 								<svg className="icon">
 									<use xlinkHref="#back" />
 								</svg>
@@ -94,11 +71,11 @@ class RepoFolder extends Component {
 					</div>
 				</div>
 
-				<div className={this.state.toggle ? "repoFolder__front" : "repoFolder__back"}>
+				<div className={`repoFolder__${toggle ? "front" : "back" }`}>
 					<div className="repoFolder__menu">
 
 						<div className="repoFolder__menu__option">
-							<div className="iconBtn" onClick={() => { this.props.main.changeFolderDirectory(this.state.folder.id, this.state.folder.name); }}>
+							<div className="iconBtn" onClick={this.changeDirectory}>
 								<svg className="icon">
 									<use xlinkHref="#view" />
 								</svg>
@@ -106,7 +83,11 @@ class RepoFolder extends Component {
 						</div>
 
 						<div className="repoFolder__menu__option--delete ">
-							<div className="iconBtn--danger" onClick={() => { this.deleteFolderFromRepo(false); }}>
+							<div
+								className="iconBtn--danger"
+								onClick={() => {
+									this.deleteFolderFromRepo(false);
+							}}>
 								<svg className="icon">
 									<use xlinkHref="#trash" />
 								</svg>
@@ -116,7 +97,7 @@ class RepoFolder extends Component {
 
 					<div className="repoFolder__back__bottom" >
 						<div className="repoFolder__back__bottom__box" ></div>
-						<div className="repoFolder__menuBtn" onClick={() => { this.toggleFolderView(); }}>
+						<div className="repoFolder__menuBtn" onClick={this.toggleFolderView}>
 							<div className="iconBtn--normal">
 								<svg className="icon">
 									<use xlinkHref="#back" />
@@ -131,4 +112,20 @@ class RepoFolder extends Component {
 
 }
 
-export default RepoFolder;
+RepoFolder.propTypes = {
+	folders: PropTypes.array.isRequired,
+	folder: PropTypes.object.isRequired,
+	actions: PropTypes.object.isRequired
+};
+
+const mapStateToProps = (state) => ({
+	folders: state.repoReducer.folders
+});
+
+const mapDispatchToProps = (dispatch) => ({
+	actions: {
+		repo: bindActionCreators(RepoActions, dispatch)
+	}
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(RepoFolder);

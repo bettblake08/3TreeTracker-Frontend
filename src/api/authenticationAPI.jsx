@@ -6,7 +6,7 @@ class AuthenticationAPI {
     static adminLogin(loginDetails) {
         if (MOCK) return AuthenticationAPIMock.login();
 
-        return axios.post(`admin/login`, {
+        return axios.post(`/admin/login`, {
             username: loginDetails.username,
             password: loginDetails.password
         }).then((response) => {
@@ -24,12 +24,12 @@ class AuthenticationAPI {
                 }
             }
 
-        }).catch((response) => {
-            if (response.response.status != 200) {
+        }).catch((error) => {
+            if (error.response.status != 200) {
                 return ({
                     success: false,
                     error: {
-                        status: response.response.status,
+                        status: error.response.status,
                     }
                 });
             }

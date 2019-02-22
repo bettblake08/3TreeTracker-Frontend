@@ -11,7 +11,7 @@ export function getPlacementsSuccess(data) {
 export function getPlacements(placementName) {
 	return (dispatch) => {
 		return placementAPI.getPlacements(placementName).then((response) => {
-			if (response.error == undefined) {
+			if (response.success) {
 				dispatch(getPlacementsSuccess(response));
 			}
 			else {

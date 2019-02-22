@@ -2,11 +2,13 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
-import * as AdminAccountAuthActions from "../../actions/adminAccountAuthActions";
+
+import * as AuthenticationActions from "../../actions/authenticationActions";
 import {ADMIN_LOGIN_BACKGROUND} from "../../abstract/variables";
 import Button from "../UI/button";
 import TextInput from "../UI/textInput";
 import {PasswordInput} from "../UI/newPasswordInput";
+import { MAIN_LOGO } from "../../abstract/variables";
 
 import "../../assets/styles/scss/pages/admin/login.scss";
 
@@ -74,13 +76,13 @@ class LoginPage extends Component {
 				<div className="adminLogin">
 					<div className="adminLogin__form">
  
-						<div className="icon__sec">
-							{/* <div className="icon">
+						<div className="adminLogin__icon">
+							<div className="icon">
                                 <img src={MAIN_LOGO} />
-                            </div> */}
+                            </div>
 						</div>
 
-						<form>
+						<form className="adminLogin__content">
 							<div id="username_tb">
 								<TextInput
 									parent={this}
@@ -147,7 +149,7 @@ function mapStateToProps(){
 function mapDispatchToProps(dispatch){ 
 	return {
 		actions: {
-			auth: bindActionCreators(AdminAccountAuthActions, dispatch)
+			auth: bindActionCreators(AuthenticationActions, dispatch)
 		}
 	};
 }

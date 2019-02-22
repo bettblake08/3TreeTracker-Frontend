@@ -6,7 +6,7 @@ import { bindActionCreators } from "redux";
 import{ WEB_URL, MAIN_LOGO} from "../../abstract/variables";
 import Button from "../UI/button";
 import MainHeader from "./mainHeader";
-import * as AdminAccountAuthActions from "../../actions/adminAccountAuthActions";
+import * as AuthenticationActions from "../../actions/authenticationActions";
 
 class Header extends Component {
 	constructor(props) {
@@ -102,7 +102,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 	return {
 		actions:{
-			auth: bindActionCreators(AdminAccountAuthActions, dispatch)
+			auth: bindActionCreators(AuthenticationActions, dispatch)
 		}
 	};
 }
