@@ -13,8 +13,8 @@ import Popup from "../../UI/popup";
 import TagInput from "../../UI/tagInput";
 import TextInput from "../../UI/textInput";
 import MultiLineText from "../../UI/MultiLineTextInput";
-import * as ProductActions from "../../../actions/productActions";
-import * as HelperActions from "../../../actions/helpers";
+import * as ProductActions from "../../../redux/actions/productActions";
+import * as HelperActions from "../../../redux/actions/helpers";
 
 
 class AddProduct extends Component {

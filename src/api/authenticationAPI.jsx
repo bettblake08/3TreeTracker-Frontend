@@ -1,6 +1,5 @@
-import axios, { axiosRefresh, axiosProtected } from "./config";
+import axios, { axiosRefresh, axiosProtected, MOCK } from "./config";
 import AuthenticationAPIMock from "./mock/authenticationAPI";
-import { MOCK } from "./config";
 
 class AuthenticationAPI {
     static adminLogin(loginDetails) {

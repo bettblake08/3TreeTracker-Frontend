@@ -8,13 +8,14 @@ import PropTypes from "prop-types";
 import { NewPasswordInput } from "../../UI/newPasswordInput";
 import TextInput from "../../UI/textInput";
 import { getCountries } from "../../../abstract/country";
-import {REGISTRATION_FORM} from "../../../abstract/variables";
+import { REGISTRATION_FORM } from "../../../abstract/variables";
 import PlacementInput from "../../placementInput";
 import Button from "../../UI/button";
 import DateInput from "../../UI/dateInput";
 import DropdownInput from "../../UI/dropdownInput";
-import * as errorPopupActions from "../../../actions/errorPopupActions";
-import * as longrichAccountActions from "../../../actions/longrichAccountActions";
+
+import * as errorPopupActions from "../../../redux/actions/errorPopupActions";
+import * as longrichAccountActions from "../../../redux/actions/longrichAccountActions";
 
 class AccountRegistration extends Component {
 	constructor(props) {

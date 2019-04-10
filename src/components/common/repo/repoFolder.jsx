@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 
-import * as RepoActions from "../../../actions/repoActions"
+import * as RepoActions from "../../../redux/actions/repoActions"
 
 class RepoFolder extends Component {
 	constructor(props) {

@@ -4,11 +4,11 @@
 import React from "react";
 import {render} from "react-dom";
 import {AppContainer} from "react-hot-loader";
-import configureStore, {history} from "./store/configureStore";
+import configureStore, {history} from "./redux/store/configureStore";
 import Root from "./components/root";
-import initialStoreState from "./store/initialState";
+import initialStoreState from "./redux/store/initialState";
 
-require("./favicon.ico");
+require("./assets/favicon/favicon.ico");
 
 export const store = configureStore(initialStoreState);
 

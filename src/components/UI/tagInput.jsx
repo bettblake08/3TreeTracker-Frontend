@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
 import Tag from "./tagInput/tag";
-import * as TagActions from '../../actions/tagActions';
+import * as TagActions from '../../redux/actions/tagActions';
 
 class TagInput extends Component {
 	constructor(props){

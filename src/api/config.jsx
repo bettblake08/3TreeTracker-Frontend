@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { forceLogOut, refreshToken} from '../actions/helpers';
+import { forceLogOut, refreshToken} from '../redux/actions/helpers';
 import { getLoggedInUser } from "../helper/auth.js";
 export const MOCK = process.env.REACT_APP_API_MOCK === "true";
 export const MOCK_DELAY = 0;

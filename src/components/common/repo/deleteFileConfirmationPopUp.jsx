@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 
-import * as RepoActions from "../../../actions/repoActions";
-import * as HelperActions from "../../../actions/helpers";
+import * as RepoActions from "../../../redux/actions/repoActions";
+import * as HelperActions from "../../../redux/actions/helpers";
 
 class DeleteFileConfirmationPopUp extends React.Component {
   componentDidUpdate(){

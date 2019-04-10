@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import * as PlacementActions from "../actions/placementActions";
+import * as PlacementActions from "../redux/actions/placementActions";
 
 class Placement extends Component {
 	render() {

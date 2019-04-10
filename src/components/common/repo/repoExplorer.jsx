@@ -7,7 +7,7 @@ import RepoCreateFolder from "./repoCreateFolder";
 import RepoFileUpload from "./repoFileUpload";
 import RepoContent from "./repoContent";
 
-import * as RepoActions from "../../../actions/repoActions";
+import * as RepoActions from "../../../redux/actions/repoActions";
 
 
 class RepoExplorer extends Component {

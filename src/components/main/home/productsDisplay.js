@@ -7,7 +7,7 @@ import InfiniteScroll from "react-infinite-scroller";
 import Loader from "react-loaders";
 
 import Product from "./product";
-import * as productActions from "../../../actions/productActions";
+import * as productActions from "../../../redux/actions/productActions";
 
 class ProductsView extends Component {
 	constructor(props) {

@@ -5,9 +5,9 @@ import {connect} from "react-redux";
 import BalloonEditor from "@ckeditor/ckeditor5-build-balloon";
 import CKEditor from "@ckeditor/ckeditor5-react";
 
-import * as ProductActions from "../../../actions/productActions";
-import * as TagActions from "../../../actions/tagActions";
-import * as HelperActions from "../../../actions/helpers";
+import * as ProductActions from "../../../redux/actions/productActions";
+import * as TagActions from "../../../redux/actions/tagActions";
+import * as HelperActions from "../../../redux/actions/helpers";
 import { WEB_URL } from "../../../abstract/variables";
 import Button from "../../UI/button";
 import Repo from "../../common/repo";

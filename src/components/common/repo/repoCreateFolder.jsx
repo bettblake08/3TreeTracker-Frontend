@@ -6,7 +6,7 @@ import {connect} from "react-redux";
 import Button from "../../UI/button";
 import TextInput from "../../UI/textInput";
 
-import * as RepoActions from "../../../actions/repoActions";
+import * as RepoActions from "../../../redux/actions/repoActions";
 
 class RepoCreateFolder extends Component {
 	constructor(props) {

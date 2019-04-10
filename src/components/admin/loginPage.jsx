@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 
-import * as AuthenticationActions from "../../actions/authenticationActions";
+import * as AuthenticationActions from "../../redux/actions/authenticationActions";
 import {ADMIN_LOGIN_BACKGROUND} from "../../abstract/variables";
 import Button from "../UI/button";
 import TextInput from "../UI/textInput";

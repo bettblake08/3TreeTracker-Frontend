@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from "prop-types";
 
-import * as TagActions from "../../../actions/tagActions"
+import * as TagActions from "../../../redux/actions/tagActions"
 
 class Tag extends Component {
     render() {

@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 
-import * as LongrichAccountActions from "../../../actions/longrichAccountActions";
-import * as HelperActions from "../../../actions/helpers";
+import * as LongrichAccountActions from "../../../redux/actions/longrichAccountActions";
+import * as HelperActions from "../../../redux/actions/helpers";
 
 import Button from "../../UI/button";
 import PlacementInput from "../../placementInput";

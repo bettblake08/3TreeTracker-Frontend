@@ -9,7 +9,7 @@ import LandingView from "./home/landingView";
 import ProductView from "./home/productView";
 import InfoView from "./home/infoView";
 import AccountView from "./home/accountView";
-import * as ProductActions from "../../actions/productActions";
+import * as ProductActions from "../../redux/actions/productActions";
 
 import "../../assets/styles/scss/pages/main/home.scss";
 

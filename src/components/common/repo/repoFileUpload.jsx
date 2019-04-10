@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 
 import qq from "../../../../plugins/fineUploader/fine-uploader";
 import {API_URL} from "../../../abstract/variables";
-import * as RepoActions from "../../../actions/repoActions";
+import * as RepoActions from "../../../redux/actions/repoActions";
 
 class RepoFileUpload extends Component {
 	constructor(props) {

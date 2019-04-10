@@ -4,8 +4,8 @@ import {connect} from "react-redux";
 import { bindActionCreators } from "redux";
 
 import IconButton from "../../UI/iconButton";
-import * as longrichAccountActions from "../../../actions/longrichAccountActions";
-import * as HelperActions from "../../../actions/helpers";
+import * as longrichAccountActions from "../../../redux/actions/longrichAccountActions";
+import * as HelperActions from "../../../redux/actions/helpers";
 
 
 class Account extends Component {

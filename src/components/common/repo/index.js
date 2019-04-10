@@ -10,8 +10,8 @@ import RepoExplorer from "./repoExplorer";
 import DeleteFolderConfirmationPopUp from "./deleteFolderConfirmationPopUp";
 import DeleteFileConfirmationPopUp from "./deleteFileConfirmationPopUp";
 
-import * as RepoActions from "../../../actions/repoActions";
-import * as HelperActions from "../../../actions/helpers";
+import * as RepoActions from "../../../redux/actions/repoActions";
+import * as HelperActions from "../../../redux/actions/helpers";
 
 class Repo extends Component {
 

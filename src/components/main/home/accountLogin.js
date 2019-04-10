@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { PasswordInput } from "../../UI/newPasswordInput";
 import TextInput from "../../UI/textInput";
 import Button from "../../UI/button";
-import * as AuthenticationActions from "../../../actions/authenticationActions";
+import * as AuthenticationActions from "../../../redux/actions/authenticationActions";
 
 
 class AccountLogin extends Component {

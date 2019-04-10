@@ -13,7 +13,7 @@ import DropdownInput from "../UI/dropdownInput";
 import EditAccountPopup from "./accountsPage/editAccountPopup";
 import Account from "./accountsPage/account";
 
-import * as LongrichAccountsActions from "../../actions/longrichAccountActions";
+import * as LongrichAccountsActions from "../../redux/actions/longrichAccountActions";
 
 import "../../assets/styles/scss/pages/admin/accounts.scss";
 

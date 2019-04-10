@@ -5,7 +5,7 @@ import {connect} from "react-redux";
 import InfiniteScroll from "react-infinite-scroller";
 import Loader from "react-loaders";
 
-import * as ProductActions from "../../../actions/productActions";
+import * as ProductActions from "../../../redux/actions/productActions";
 import ButtonWithIcon from "../../UI/buttonWithIcon";
 import Product from "./product";
 

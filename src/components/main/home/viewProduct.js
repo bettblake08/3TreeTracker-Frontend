@@ -9,7 +9,7 @@ import {WEB_URL, DEFAULT_PRODUCT_COVER_PIC} from "../../../abstract/variables";
 // import CommentingSystem from "../../common/commentSystem";
 import ButtonWithIcon from "../../UI/buttonWithIcon";
 
-import * as ProductActions from "../../../actions/productActions";
+import * as ProductActions from "../../../redux/actions/productActions";
 import { getHumanizedTime } from "../../../helper/time";
 import Loader from "react-loaders";
 

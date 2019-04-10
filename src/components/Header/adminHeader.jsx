@@ -6,7 +6,7 @@ import { bindActionCreators } from "redux";
 import{ WEB_URL, MAIN_LOGO} from "../../abstract/variables";
 import Button from "../UI/button";
 import MainHeader from "./mainHeader";
-import * as AuthenticationActions from "../../actions/authenticationActions";
+import * as AuthenticationActions from "../../redux/actions/authenticationActions";
 
 class Header extends Component {
 	constructor(props) {

@@ -7,7 +7,7 @@ import { API_URL, DEFAULT_USER_PIC } from "../../../abstract/variables";
 import MultiLineTextInput from "../../UI/MultiLineTextInput";
 import TextInput from "../../UI/textInput";
 import Button from "../../UI/button";
-import * as CommentActions from "../../../actions/commentActions";
+import * as CommentActions from "../../redux/actions/commentActions";
 
 class CommentInput extends Component {
 	constructor(props) {
